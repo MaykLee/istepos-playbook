@@ -4,6 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ISTEPOS — Defensive Playbook</title>
+  <style>
+    .playbook-grid {
+      display: grid;
+      grid-template-columns: minmax(180px, 240px) 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 700px) {
+      .playbook-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
   </head>
   <body>
     <div id="root"></div>
