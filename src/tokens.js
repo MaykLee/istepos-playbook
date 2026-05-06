@@ -1,0 +1,17 @@
+export const G = {
+  bg:  '#0e0e12',
+  s:   '#16161e',
+  s2:  '#1e1e2a',
+  au:  '#c9a227',
+  aul: 'rgba(201,162,39,0.18)',
+  aub: 'rgba(201,162,39,0.08)',
+  bl:  '#5b9bd5',
+  rd:  '#d45b5b',
+  gr:  '#5daf6c',
+  am:  '#e0a030',
+  tx:  '#e4dcc8',
+  mu:  '#7a7060',
+  mu2: '#a09080',
+  sr:  "Georgia,'Times New Roman',serif",
+  mo:  "'Courier New',Courier,monospace",
+}
