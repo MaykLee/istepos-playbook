@@ -69,14 +69,14 @@ export const GLOSSARY_MAP = {
   'WR':  'Wide Receiver — receptor aberto, alinhado na linha lateral.',
   'TE':  'Tight End — ala fechado. Bloqueia e recebe passes, posição versátil.',
   'OL':  'Offensive Line — linha ofensiva: center, guards e tackles.',
-  // Campo e conceitos
+  // Campo e conceitos (chaves em UPPERCASE para bater com o lookup via toUpperCase())
   'LOS':      'Line of Scrimmage — linha onde a bola é posicionada para o início de cada jogada.',
-  'gap':      'Gap — espaço entre dois linemen onde um defensor pode penetrar para atacar o backfield.',
-  'blitz':    'Blitz — quando LBs ou DBs adicionais cruzam a LOS para pressionar o QB além dos 4 DLs normais.',
-  'stunt':    'Stunt — movimento coordenado entre DLs para enganar o bloqueio e criar pressão interior.',
-  'coverage': 'Coverage — esquema defensivo de cobertura dos receptores do ataque.',
-  'flat':     'Flat — zona próxima à linha lateral e à LOS, geralmente coberta pelo CB ou LB externo.',
-  'seam':     'Seam — corredor vertical entre zonas de cobertura, explorado por TEs e slots.',
-  'snap':     'Snap — entrega da bola do center ao QB que inicia a jogada.',
-  'backside': 'Backside — lado da formação oposto ao lado forte (away from strength).',
+  'GAP':      'Gap — espaço entre dois linemen onde um defensor pode penetrar para atacar o backfield.',
+  'BLITZ':    'Blitz — quando LBs ou DBs adicionais cruzam a LOS para pressionar o QB além dos 4 DLs normais.',
+  'STUNT':    'Stunt — movimento coordenado entre DLs para enganar o bloqueio e criar pressão interior.',
+  'COVERAGE': 'Coverage — esquema defensivo de cobertura dos receptores do ataque.',
+  'FLAT':     'Flat — zona próxima à linha lateral e à LOS, geralmente coberta pelo CB ou LB externo.',
+  'SEAM':     'Seam — corredor vertical entre zonas de cobertura, explorado por TEs e slots.',
+  'SNAP':     'Snap — entrega da bola do center ao QB que inicia a jogada.',
+  'BACKSIDE': 'Backside — lado da formação oposto ao lado forte (away from strength).',
 }
