@@ -10,10 +10,14 @@
       grid-template-columns: minmax(180px, 240px) 1fr;
       gap: 16px;
     }
+    .dict-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
     @media (max-width: 700px) {
-      .playbook-grid {
-        grid-template-columns: 1fr;
-      }
+      .playbook-grid { grid-template-columns: 1fr; }
+      .dict-grid     { grid-template-columns: 1fr; }
     }
   </style>
   </head>
