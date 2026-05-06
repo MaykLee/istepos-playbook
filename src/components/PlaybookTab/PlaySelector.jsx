@@ -1,5 +1,5 @@
 import { G } from '../../tokens.js'
-import { PLAYS_BY_FRONT, FRONT_ORDER } from '../../data/plays.js'
+import { FRONT_ORDER } from '../../data/plays.js'
 
 const FRONT_COLORS = {
   Stack:         G.bl,
@@ -11,10 +11,24 @@ const FRONT_COLORS = {
 
 const COV_COLORS = { Blue: G.bl, Green: G.gr, Orange: G.am, Silver: G.mu2 }
 
-export default function PlaySelector({ selectedId, onSelect }) {
+export default function PlaySelector({ plays, selectedId, onSelect }) {
+  if (plays.length === 0) {
+    return (
+      <div style={{ textAlign: 'center', padding: '24px 0', color: G.mu, fontFamily: G.mo, fontSize: 11 }}>
+        Nenhuma jogada encontrada
+      </div>
+    )
+  }
+
+  const byFront = FRONT_ORDER.reduce((acc, f) => {
+    const group = plays.filter(p => p.front === f)
+    if (group.length) acc[f] = group
+    return acc
+  }, {})
+
   return (
     <div style={{ overflowY: 'auto', maxHeight: '100%' }}>
-      {FRONT_ORDER.filter(f => PLAYS_BY_FRONT[f]).map(front => {
+      {FRONT_ORDER.filter(f => byFront[f]).map(front => {
         const color = FRONT_COLORS[front] || G.mu
         return (
           <div key={front} style={{ marginBottom: 16 }}>
@@ -26,7 +40,7 @@ export default function PlaySelector({ selectedId, onSelect }) {
               {front}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-              {PLAYS_BY_FRONT[front].map(play => {
+              {byFront[front].map(play => {
                 const isSelected = play.id === selectedId
                 const parts = play.name.split(' ')
                 const coverage = parts[parts.length - 1]
