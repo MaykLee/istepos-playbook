@@ -72,11 +72,11 @@ export const BASES = {
 }
 
 export const STUNT_MOVES = {
-  Pinch:   { E_left: { x: 174, y: 162 }, E_right: { x: 226, y: 162 }, N: { x: 200, y: 160 } },
-  Contain: { E_left: { x: 130, y: 160 }, E_right: { x: 270, y: 160 }, N: { x: 200, y: 160 } },
-  Slash:   { E_left: { x: 182, y: 160 }, E_right: { x: 272, y: 158 }, N: { x: 192, y: 160 } },
-  Wiz:     { E_left: { x: 158, y: 162 }, E_right: { x: 236, y: 162 }, N: { x: 212, y: 160 } },
-  Axe:     { E_left: { x: 148, y: 160 }, E_right: { x: 252, y: 160 }, N: { x: 200, y: 158 } },
+  Pinch:   { E_left: { x: 174, y: 182 }, E_right: { x: 226, y: 182 }, N: { x: 200, y: 182 } },
+  Contain: { E_left: { x: 130, y: 182 }, E_right: { x: 270, y: 182 }, N: { x: 200, y: 182 } },
+  Slash:   { E_left: { x: 182, y: 182 }, E_right: { x: 272, y: 180 }, N: { x: 192, y: 182 } },
+  Wiz:     { E_left: { x: 158, y: 182 }, E_right: { x: 236, y: 182 }, N: { x: 212, y: 182 } },
+  Axe:     { E_left: { x: 148, y: 182 }, E_right: { x: 252, y: 182 }, N: { x: 200, y: 182 } },
 }
 
 export const BLITZ_MOVES = {
