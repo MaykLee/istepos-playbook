@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { G } from '../../tokens.js'
+import GlossaryText from '../GlossaryText.jsx'
 import { PLAYS } from '../../data/plays.js'
 import { buildPlayers } from '../../data/formations.js'
 import FieldDiagram from './FieldDiagram.jsx'
@@ -80,11 +81,13 @@ function SelectorSection({ label, options, selected, onSelect, descMap }) {
         })}
       </div>
       {desc && (
-        <div style={{
+        <GlossaryText as="div" style={{
           marginTop: 6, fontSize: 10, color: G.mu2, lineHeight: 1.5,
           padding: '6px 10px', background: G.s2, borderRadius: 4,
           border: `1px solid ${G.aul}`,
-        }}>{desc}</div>
+        }}>
+          {desc}
+        </GlossaryText>
       )}
     </div>
   )

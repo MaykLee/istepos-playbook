@@ -1,3 +1,5 @@
+// ─── Glossário completo (usado na aba Glossário com busca e categorias) ────────
+
 export const GLOSSARY = [
   { term: 'Snap',           cat: 'Geral',  def: 'O center passa a bola pro QB entre as pernas. A jogada começa.' },
   { term: 'Huddle',         cat: 'Geral',  def: 'Reunião do time antes do snap. QB fala a jogada em segredo. Não existe no 2-minute drill.' },
@@ -44,3 +46,37 @@ export const GLOSSARY = [
 ]
 
 export const GLOSSARY_CATS = ['Todos', 'Geral', 'Ataque', 'Defesa', 'Rotas']
+
+// ─── Mapa de termos para tooltips inline (usado pelo GlossaryText) ─────────────
+// Apenas termos de uma palavra para facilitar o match via regex.
+
+export const GLOSSARY_MAP = {
+  // Posições — Defesa
+  'DB':  'Defensive Back — categoria que inclui CBs, Safeties e outros defensores da secundária.',
+  'CB':  'Cornerback — defensor que marca o wide receiver na linha lateral.',
+  'FS':  'Free Safety — safety livre que cobre o fundo do campo e dá suporte geral.',
+  'SS':  'Strong Safety — safety posicionado no lado forte, geralmente mais físico.',
+  'LB':  'Linebacker — jogador entre a linha defensiva e a secundária. Cobre corrida e passe.',
+  'MLB': 'Middle Linebacker (Mike) — linebacker central que lidera a defesa e faz o assignment.',
+  'OLB': 'Outside Linebacker — linebacker de borda, responsável pelo C-gap e contenção exterior.',
+  'DL':  'Defensive Line — linha defensiva, composta por DE, NT e/ou DT.',
+  'DE':  'Defensive End — ponta da linha defensiva. Rush de borda e contenção do QB.',
+  'NT':  'Nose Tackle — tackle central alinhado contra o center, domina o gap A.',
+  'DT':  'Defensive Tackle — tackle defensivo interior que ocupa os guards.',
+  // Posições — Ataque
+  'QB':  'Quarterback — armador do ataque. Recebe o snap e decide a jogada.',
+  'RB':  'Running Back — corredor do ataque. Recebe handoffs e bloqueia.',
+  'WR':  'Wide Receiver — receptor aberto, alinhado na linha lateral.',
+  'TE':  'Tight End — ala fechado. Bloqueia e recebe passes, posição versátil.',
+  'OL':  'Offensive Line — linha ofensiva: center, guards e tackles.',
+  // Campo e conceitos
+  'LOS':      'Line of Scrimmage — linha onde a bola é posicionada para o início de cada jogada.',
+  'gap':      'Gap — espaço entre dois linemen onde um defensor pode penetrar para atacar o backfield.',
+  'blitz':    'Blitz — quando LBs ou DBs adicionais cruzam a LOS para pressionar o QB além dos 4 DLs normais.',
+  'stunt':    'Stunt — movimento coordenado entre DLs para enganar o bloqueio e criar pressão interior.',
+  'coverage': 'Coverage — esquema defensivo de cobertura dos receptores do ataque.',
+  'flat':     'Flat — zona próxima à linha lateral e à LOS, geralmente coberta pelo CB ou LB externo.',
+  'seam':     'Seam — corredor vertical entre zonas de cobertura, explorado por TEs e slots.',
+  'snap':     'Snap — entrega da bola do center ao QB que inicia a jogada.',
+  'backside': 'Backside — lado da formação oposto ao lado forte (away from strength).',
+}

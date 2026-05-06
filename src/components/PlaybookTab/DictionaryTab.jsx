@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { G } from '../../tokens.js'
 import { DICT_FRONTS, DICT_STUNTS, DICT_BLITZES, DICT_COVERAGES } from '../../data/dictionary.js'
+import GlossaryText from '../GlossaryText.jsx'
 
 const CATEGORIES = [
   { id: 'fronts',    label: 'FRONTS',    data: DICT_FRONTS    },
@@ -14,9 +15,13 @@ function DictCard({ entry }) {
   return (
     <div style={{ background: G.s2, border: `1px solid rgba(201,162,39,0.12)`, borderRadius: 8, padding: '14px 16px' }}>
       <div style={{ fontSize: 11, color, fontFamily: G.mo, letterSpacing: 1, marginBottom: 6 }}>{entry.name}</div>
-      <p style={{ fontSize: 11, color: G.tx, lineHeight: 1.6, margin: '0 0 8px' }}>{entry.desc}</p>
+      <GlossaryText as="p" style={{ fontSize: 11, color: G.tx, lineHeight: 1.6, margin: '0 0 8px' }}>
+        {entry.desc}
+      </GlossaryText>
       <div style={{ borderTop: `1px solid ${G.aul}`, paddingTop: 8 }}>
-        <p style={{ fontSize: 10, color: G.mu2, lineHeight: 1.6, margin: '0 0 4px' }}>{entry.detail}</p>
+        <GlossaryText as="p" style={{ fontSize: 10, color: G.mu2, lineHeight: 1.6, margin: '0 0 4px' }}>
+          {entry.detail}
+        </GlossaryText>
         {entry.positions && <span style={{ fontSize: 9, color: G.mu, fontFamily: G.mo }}>{entry.positions}</span>}
       </div>
     </div>

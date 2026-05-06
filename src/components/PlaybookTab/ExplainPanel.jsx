@@ -1,4 +1,5 @@
 import { G } from '../../tokens.js'
+import GlossaryText from '../GlossaryText.jsx'
 
 const COV_COLORS = { Blue: G.bl, Green: G.gr, Orange: G.am, Silver: G.mu2 }
 
@@ -20,7 +21,9 @@ export default function ExplainPanel({ play, selectedPlayer }) {
             borderRadius: 3, padding: '2px 7px',
           }}>{play.coverage}</span>
         </div>
-        <p style={{ fontSize: 12, color: G.mu2, lineHeight: 1.6, margin: 0 }}>{play.description}</p>
+        <GlossaryText as="p" style={{ fontSize: 12, color: G.mu2, lineHeight: 1.6, margin: 0 }}>
+          {play.description}
+        </GlossaryText>
       </div>
 
       {selectedPlayer ? (
@@ -32,7 +35,9 @@ export default function ExplainPanel({ play, selectedPlayer }) {
           <div style={{ fontSize: 14, color: G.au, fontFamily: G.sr, marginBottom: 6 }}>
             {selectedPlayer.label} — {selectedPlayer.name}
           </div>
-          <p style={{ fontSize: 12, color: G.tx, lineHeight: 1.7, margin: 0 }}>{selectedPlayer.role}</p>
+          <GlossaryText as="p" style={{ fontSize: 12, color: G.tx, lineHeight: 1.7, margin: 0 }}>
+            {selectedPlayer.role}
+          </GlossaryText>
         </div>
       ) : (
         <div style={{
