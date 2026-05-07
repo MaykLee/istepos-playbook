@@ -19,6 +19,15 @@
       .playbook-grid { grid-template-columns: 1fr; }
       .dict-grid     { grid-template-columns: 1fr; }
     }
+    @keyframes floatUp {
+      0%   { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-40px); }
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%,60% { transform: translateX(-6px); }
+      40%,80% { transform: translateX(6px); }
+    }
   </style>
   </head>
   <body>
