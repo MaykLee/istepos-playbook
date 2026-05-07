@@ -29,6 +29,102 @@ export const QUIZ_COVERAGE = [
   { q: 'Olhando para o campo, identifique a cobertura traseira.', opts: ['Cover 2', 'Cover 2 Man', 'Cover 4', 'Cover 3'], ans: 3, exp: 'Três zonas no fundo (CB + FS + CB) = Cover 3. Coberturas curtas ficam com os LBs.', playId: '55-contain-buck-green' },
 ]
 
+export function generatePlayQuiz(play) {
+  function sh(arr) {
+    const a = [...arr]
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]]
+    }
+    return a
+  }
+
+  function mkq(q, correct, wrongPool, exp) {
+    const wrongs = sh(wrongPool).slice(0, 3)
+    const all = sh([correct, ...wrongs])
+    return { q, opts: all, ans: all.indexOf(correct), exp, playId: play.id }
+  }
+
+  const COV_LABEL = { Blue: 'Cover 2 (Blue)', Green: 'Cover 3 (Green)', Orange: 'Cover 4 (Orange)', Silver: 'Cover 2 Man (Silver)' }
+  const COV_EXP = {
+    Blue:   'Cover 2: dois safeties dividem o fundo em duas zonas. CBs cobrem o flat.',
+    Green:  'Cover 3: três zonas no fundo (CB + FS + CB). LBs cobrem o curto.',
+    Orange: 'Cover 4: quatro zonas no fundo. Excelente contra passes profundos.',
+    Silver: 'Cover 2 Man: dois safeties + marcação individual nos receptores.',
+  }
+  const STUNT_EXP = {
+    Pinch:   'Pinch: DEs fecham para dentro, comprimindo os gaps A e B.',
+    Contain: 'Contain: DEs mantêm contenção da borda. QB não escapa lateralmente.',
+    Slash:   'Slash: um DE corta diagonal pelo gap, o outro faz o movimento inverso.',
+    Wiz:     'Wiz: redistribuição de gap — DLs trocam de lado após o snap.',
+    Axe:     'Axe: DEs seguram o gap com técnica de eixo. Controlado e disciplinado.',
+  }
+  const FRONT_EXP = {
+    Stack:         'Stack: linha de 4 com NT no gap A. Formação base equilibrada.',
+    '55':          '55 (Over): linha deslocada para o lado forte. NT sai do gap A.',
+    Angle:         'Angle: linha em ângulo — DE posicionado para criar ângulo imprevisível.',
+    'LSU Prevent': 'LSU Prevent: 5 DBs em campo. Prioridade em não ceder passes profundos.',
+    Dam:           'Dam: formação especial para situações táticas específicas.',
+  }
+  const MOD_EXP = {
+    Buck:  'Buck blitza pelo gap forte (lado do TE).',
+    Will:  'Will blitza pelo gap fraco (backside).',
+    Mike:  'Mike blitza pelo gap A. Pressão central direta no QB.',
+    Fire:  'Fire: Will + Buck blitzam juntos. Pressão dupla pelos gaps laterais.',
+    WiM:   'WiM: Will + Mike blitzam juntos. Pressão pelo centro e lado fraco.',
+    BuD:   'BuD: Buck + Dog blitzam. Overload no lado forte.',
+    RoD:   'RoD: Rover + Dog blitzam pelo exterior.',
+    Dog:   'Dog blitza pelo exterior, de ângulo surpresa.',
+    Blood: 'Blood: combinação especial — confirmar com o coordenador.',
+  }
+
+  const qs = []
+
+  // Q1: Frente
+  qs.push(mkq(
+    'Qual é a frente defensiva nessa jogada?',
+    play.front,
+    ['Stack', '55', 'Angle', 'LSU Prevent', 'Dam'].filter(f => f !== play.front),
+    FRONT_EXP[play.front] || play.front,
+  ))
+
+  // Q2: Stunt
+  qs.push(mkq(
+    'Que stunt os DLs executam?',
+    play.stunt,
+    ['Pinch', 'Contain', 'Slash', 'Wiz', 'Axe'].filter(s => s !== play.stunt),
+    STUNT_EXP[play.stunt] || play.stunt,
+  ))
+
+  // Q3: Blitz
+  if (play.modifier.length === 0) {
+    qs.push(mkq(
+      'Há blitz nessa jogada?',
+      'Sem blitz',
+      ['Buck', 'Will', 'Mike', 'Fire'],
+      'Essa jogada não tem blitz. Os LBs mantêm cobertura e responsabilidade de gap.',
+    ))
+  } else {
+    const correctMod = play.modifier.join(' + ')
+    qs.push(mkq(
+      'Quem blitza nessa jogada?',
+      correctMod,
+      ['Buck', 'Will', 'Mike', 'Fire', 'WiM', 'BuD', 'RoD', 'Dog'].filter(m => !play.modifier.includes(m)),
+      MOD_EXP[play.modifier[0]] || `${correctMod} blitza.`,
+    ))
+  }
+
+  // Q4: Cobertura
+  qs.push(mkq(
+    'Qual é a cobertura traseira?',
+    COV_LABEL[play.coverage],
+    ['Blue', 'Green', 'Orange', 'Silver'].filter(c => c !== play.coverage).map(c => COV_LABEL[c]),
+    COV_EXP[play.coverage] || play.coverage,
+  ))
+
+  return qs
+}
+
 export const QUIZ_SITUATIONS = [
   { q: '3rd & 15 no campo próprio. O que o ataque provavelmente vai fazer?', opts: ['Corrida pelo gap A', 'Passe curto no flat', 'Passe longo ou cruzamento profundo', 'QB sneak'], ans: 2, exp: '3rd & 15 = o ataque PRECISA ganhar 15 yards em um play. Espere rotas de médio/longo alcance.' },
   { q: '4th & 1 na linha de 40 adversária. O que esperar?', opts: ['Punt imediato', 'Field goal tentativa', 'Corrida direta ou QB sneak', 'Hail Mary'], ans: 2, exp: '4th & 1 = a apenas 1 yard de conversão, a tendência é tentar converter com corrida ou QB sneak.' },

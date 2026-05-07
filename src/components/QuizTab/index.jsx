@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { G } from '../../tokens.js'
-import { QUIZ_DEFENSE, QUIZ_COVERAGE, QUIZ_SITUATIONS } from '../../data/quiz.js'
-import { PLAYS } from '../../data/plays.js'
+import { QUIZ_DEFENSE, QUIZ_COVERAGE, QUIZ_SITUATIONS, generatePlayQuiz } from '../../data/quiz.js'
+import { PLAYS, PLAYS_BY_FRONT, FRONT_ORDER } from '../../data/plays.js'
 import FieldDiagram from '../PlaybookTab/FieldDiagram.jsx'
 import useQuizProgress from './useQuizProgress.js'
 
@@ -13,7 +13,7 @@ const QUIZ_POOLS = {
 }
 
 const CAT_LABELS = {
-  Defense: 'Defesa', Coverage: 'Coberturas', Situations: 'Situações', All: 'Todas',
+  Defense: 'Defesa', Coverage: 'Coberturas', Situations: 'Situações', All: 'Todas', PlayQuiz: 'Por Jogada',
 }
 
 function shuffle(arr) {
@@ -35,13 +35,24 @@ export default function QuizTab() {
   const [answers, setAnswers]         = useState([])
   const [screenFlash, setScreenFlash] = useState(null)
   const [xpFloat, setXpFloat]         = useState(null)
+  const [selectedPlay, setSelectedPlay] = useState(null)
 
   const timersRef = useRef([])
   useEffect(() => () => { timersRef.current.forEach(clearTimeout) }, [])
 
   function startQuiz(cat) {
+    if (cat === 'PlayQuiz') { setScreen('play-select'); return }
     setCategory(cat)
     setQuiz(shuffle(QUIZ_POOLS[cat]))
+    setQi(0); setChosen(null); setAnswers([])
+    setXpFloat(null); setScreenFlash(null)
+    setScreen('quiz')
+  }
+
+  function startPlayQuiz(play) {
+    setSelectedPlay(play)
+    setCategory('PlayQuiz')
+    setQuiz(generatePlayQuiz(play))
     setQi(0); setChosen(null); setAnswers([])
     setXpFloat(null); setScreenFlash(null)
     setScreen('quiz')
@@ -131,7 +142,41 @@ export default function QuizTab() {
               <span style={{ fontSize: 11, color: G.mu }}>{QUIZ_POOLS[cat].length} perguntas</span>
             </button>
           ))}
+          <button onClick={() => startQuiz('PlayQuiz')} style={{
+            background: 'rgba(93,175,108,0.08)', border: `1px solid rgba(93,175,108,0.3)`, borderRadius: 7,
+            padding: '12px 16px', textAlign: 'left', cursor: 'pointer', color: G.tx,
+            fontSize: 13, fontFamily: 'system-ui,sans-serif',
+          }}>
+            <span style={{ fontFamily: G.mo, color: G.gr, marginRight: 8 }}>Por Jogada</span>
+            <span style={{ fontSize: 11, color: G.mu }}>4 perguntas geradas da jogada</span>
+          </button>
         </div>
+      </div>
+    )
+  }
+
+  // ── PLAY SELECT SCREEN ──────────────────────────────────────
+  if (screen === 'play-select') {
+    return (
+      <div style={{ maxWidth: 540, margin: '0 auto', padding: '20px 0' }}>
+        <button onClick={() => setScreen('home')} style={{ background: 'none', border: 'none', color: G.mu, cursor: 'pointer', fontSize: 12, fontFamily: G.mo, marginBottom: 16, padding: 0 }}>← voltar</button>
+        <div style={{ fontFamily: G.mo, fontSize: 11, color: G.mu, marginBottom: 16 }}>ESCOLHA A JOGADA</div>
+        {FRONT_ORDER.filter(f => PLAYS_BY_FRONT[f]).map(front => (
+          <div key={front} style={{ marginBottom: 20 }}>
+            <div style={{ fontFamily: G.mo, fontSize: 10, color: G.au, marginBottom: 8, letterSpacing: 1 }}>{front.toUpperCase()}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {PLAYS_BY_FRONT[front].map(play => (
+                <button key={play.id} onClick={() => startPlayQuiz(play)} style={{
+                  background: G.s, border: `1px solid rgba(255,255,255,0.08)`, borderRadius: 7,
+                  padding: '10px 14px', textAlign: 'left', cursor: 'pointer', color: G.tx,
+                  fontSize: 12, fontFamily: 'system-ui,sans-serif',
+                }}>
+                  {play.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     )
   }
@@ -159,8 +204,15 @@ export default function QuizTab() {
             </div>
           ))}
         </div>
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-          <button onClick={() => startQuiz(category)} style={{ background: G.aul, border: `1px solid ${G.au}`, borderRadius: 6, padding: '8px 24px', color: G.au, cursor: 'pointer', fontSize: 12, fontFamily: G.mo }}>jogar novamente</button>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+          {category === 'PlayQuiz' ? (
+            <>
+              <button onClick={() => startPlayQuiz(selectedPlay)} style={{ background: 'rgba(93,175,108,0.1)', border: `1px solid ${G.gr}`, borderRadius: 6, padding: '8px 24px', color: G.gr, cursor: 'pointer', fontSize: 12, fontFamily: G.mo }}>repetir jogada</button>
+              <button onClick={() => setScreen('play-select')} style={{ background: G.aul, border: `1px solid ${G.au}`, borderRadius: 6, padding: '8px 24px', color: G.au, cursor: 'pointer', fontSize: 12, fontFamily: G.mo }}>outra jogada</button>
+            </>
+          ) : (
+            <button onClick={() => startQuiz(category)} style={{ background: G.aul, border: `1px solid ${G.au}`, borderRadius: 6, padding: '8px 24px', color: G.au, cursor: 'pointer', fontSize: 12, fontFamily: G.mo }}>jogar novamente</button>
+          )}
           <button onClick={() => setScreen('home')} style={{ background: G.s, border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 6, padding: '8px 24px', color: G.mu2, cursor: 'pointer', fontSize: 12, fontFamily: G.mo }}>mudar categoria</button>
         </div>
       </div>
