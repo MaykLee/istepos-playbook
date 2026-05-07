@@ -67,4 +67,14 @@ describe('useQuizProgress', () => {
     expect(result.current.progress.xp).toBe(10)
     expect(result.current.progress.byCategory.Defense.total).toBe(0)
   })
+
+  it('tolera schema desatualizado no localStorage (faltando byCategory)', () => {
+    localStorage.setItem('istepos_quiz_progress', JSON.stringify({ xp: 5, history: [] }))
+    const { result } = renderHook(() => useQuizProgress())
+    expect(result.current.progress.xp).toBe(5)
+    expect(result.current.progress.byCategory.Defense.total).toBe(0)
+    // Must not throw when addResult is called
+    act(() => { result.current.addResult('Defense', 3, 5) })
+    expect(result.current.progress.xp).toBe(8)
+  })
 })
