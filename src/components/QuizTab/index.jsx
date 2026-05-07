@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { G } from '../../tokens.js'
 import { QUIZ_DEFENSE, QUIZ_COVERAGE, QUIZ_SITUATIONS } from '../../data/quiz.js'
 import { PLAYS } from '../../data/plays.js'
@@ -36,6 +36,9 @@ export default function QuizTab() {
   const [screenFlash, setScreenFlash] = useState(null)
   const [xpFloat, setXpFloat]         = useState(null)
 
+  const timersRef = useRef([])
+  useEffect(() => () => { timersRef.current.forEach(clearTimeout) }, [])
+
   function startQuiz(cat) {
     setCategory(cat)
     setQuiz(shuffle(QUIZ_POOLS[cat]))
@@ -51,10 +54,10 @@ export default function QuizTab() {
     if (correct) {
       setScreenFlash('correct')
       setXpFloat({ key: Date.now() })
-      setTimeout(() => { setScreenFlash(null); setXpFloat(null) }, 800)
+      timersRef.current.push(setTimeout(() => { setScreenFlash(null); setXpFloat(null) }, 800))
     } else {
       setScreenFlash('wrong')
-      setTimeout(() => setScreenFlash(null), 300)
+      timersRef.current.push(setTimeout(() => setScreenFlash(null), 300))
     }
     setAnswers(a => [...a, { q: quiz[qi].q, chosen: i, ans: quiz[qi].ans, exp: quiz[qi].exp, correct }])
   }
@@ -137,7 +140,7 @@ export default function QuizTab() {
   if (screen === 'result') {
     const finalScore = answers.filter(a => a.correct).length
     const pct  = Math.round((finalScore / quiz.length) * 100)
-    const rank = pct >= 90 ? 'Mestre da Defesa' : pct >= 70 ? 'Veterano' : pct >= 50 ? 'Recruta Promissor' : 'Calouro'
+    const rank = pct >= 90 ? 'Mestre!' : pct >= 70 ? 'Veterano' : pct >= 50 ? 'Recruta Promissor' : 'Calouro'
     return (
       <div style={{ maxWidth: 540, margin: '0 auto', textAlign: 'center', padding: '20px 0' }}>
         <div style={{ fontFamily: G.sr, fontSize: 32, color: G.au, marginBottom: 4 }}>{rank}</div>
