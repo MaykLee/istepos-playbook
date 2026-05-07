@@ -1,6 +1,51 @@
 # ISTEPOS Playbook — Backlog
 
-> Atualizado: 2026-05-07. V2.1 entregue e no ar.
+> Atualizado: 2026-05-07. Quiz v2 entregue e no ar.
+
+---
+
+## ✅ Entregue — Quiz v2 (sessão 2026-05-07)
+
+- QUIZ_DEFENSE expandido para 15 perguntas
+- QUIZ_COVERAGE (8 perguntas com FieldDiagram integrado)
+- QUIZ_SITUATIONS (8 perguntas de down & distance / relógio)
+- Tela inicial com seletor de categoria (Defesa / Coberturas / Situações / Todas)
+- Progresso persistente via localStorage (XP, histórico, % de acerto por categoria)
+- Feedback animado: flash verde/vermelho, shake no erro, "+1 XP" flutuante
+- 57 testes passando
+
+---
+
+## PRÓXIMA — Quiz por Jogada (geração dinâmica de perguntas)
+
+> Ideia: o jogador seleciona qualquer jogada do playbook e responde perguntas geradas automaticamente sobre ela.
+
+### Conceito
+
+Nova categoria no seletor de quiz: **"Por Jogada"**.
+- Passo 1: seletor de jogada (similar ao PlaySelector existente, agrupado por frente)
+- Passo 2: 4–5 perguntas geradas dinamicamente a partir dos dados da jogada
+- Passo 3: resultado com acerto + explicações
+
+### Perguntas geradas automaticamente (sem escrever manualmente)
+
+A partir de `PLAYS[i]` já temos tudo:
+
+| Campo | Pergunta gerada |
+|---|---|
+| `play.coverage` | "Qual é a cobertura desta jogada?" (4 opções: Cover 2 / Cover 3 / Cover 4 / Man) |
+| `play.stunt` | "Que stunt os DLs executam?" (4 opções aleatórias do STUNT_DESC) |
+| `play.modifier` | "Há blitz nessa jogada?" / "Quem blitza?" (baseado no modifier) |
+| `play.front` | "Qual é a frente defensiva?" (Stack / 55 / Angle / etc.) |
+| `play.players[N].role` | "O que o Nose Tackle faz nessa jogada?" (role do jogador N) |
+
+### Arquivos a tocar
+- `src/data/quiz.js` — função `generatePlayQuiz(play)` que retorna array de perguntas
+- `src/components/QuizTab/index.jsx` — nova tela de seleção de jogada + integração com generatePlayQuiz
+
+### Decisão de design pendente
+- Mostrar FieldDiagram enquanto o jogador responde as perguntas da jogada? (provavelmente sim)
+- Quantas perguntas por jogada? (sugestão: 4, cobrindo coverage + stunt + modifier + front)
 
 ---
 
