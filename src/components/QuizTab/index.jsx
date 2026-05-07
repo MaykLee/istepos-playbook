@@ -85,71 +85,98 @@ export default function QuizTab() {
   }
 
   // ── HOME SCREEN ─────────────────────────────────────────────
+  const CATS = [
+    { key: 'Defense',    icon: '🛡️', label: 'Defesa',      sub: `${QUIZ_POOLS.Defense.length} perguntas — conceitos, leituras e formações`,    accent: G.au,  accentA: 'rgba(201,162,39,0.14)' },
+    { key: 'Coverage',   icon: '📐', label: 'Coberturas',  sub: `${QUIZ_POOLS.Coverage.length} perguntas — com diagrama de campo`,              accent: G.bl,  accentA: 'rgba(91,155,213,0.14)'  },
+    { key: 'Situations', icon: '⏱️', label: 'Situações',   sub: `${QUIZ_POOLS.Situations.length} perguntas — down & distance, relógio, placar`, accent: G.am,  accentA: 'rgba(224,160,48,0.14)'  },
+    { key: 'PlayQuiz',   icon: '🏟️', label: 'Por Jogada',  sub: '39 jogadas — quiz gerado direto dos dados da jogada',                          accent: G.gr,  accentA: 'rgba(93,175,108,0.14)'  },
+    { key: 'All',        icon: '⚡', label: 'Modo Geral',  sub: `${QUIZ_POOLS.All.length} perguntas — tudo misturado`,                          accent: G.mu2, accentA: 'rgba(160,144,128,0.10)' },
+  ]
+
   if (screen === 'home') {
     return (
-      <div style={{ maxWidth: 540, margin: '0 auto', padding: '20px 0' }}>
-        {/* Stats panel — visível apenas se há histórico */}
-        {progress.history.length > 0 && (
-          <div style={{ background: G.s, border: `1px solid rgba(201,162,39,0.2)`, borderRadius: 10, padding: '16px 18px', marginBottom: 20 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-              <span style={{ fontFamily: G.mo, fontSize: 11, color: G.mu }}>XP TOTAL</span>
-              <span style={{ fontFamily: G.mo, fontSize: 22, color: G.au }}>{progress.xp} XP</span>
-            </div>
-            {['Defense', 'Coverage', 'Situations'].map(cat => {
-              const { correct, total } = progress.byCategory[cat]
-              const pct = total > 0 ? Math.round((correct / total) * 100) : 0
-              return (
-                <div key={cat} style={{ marginBottom: 8 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                    <span style={{ fontFamily: G.mo, fontSize: 10, color: G.mu2 }}>{CAT_LABELS[cat]}</span>
-                    <span style={{ fontFamily: G.mo, fontSize: 10, color: G.mu }}>{total > 0 ? `${pct}%` : '—'}</span>
-                  </div>
-                  <div style={{ height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2 }}>
-                    {total > 0 && (
-                      <div style={{ height: '100%', width: `${pct}%`, background: pct >= 70 ? G.gr : pct >= 50 ? G.au : G.rd, borderRadius: 2 }} />
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-            <div style={{ marginTop: 12, borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 12 }}>
-              <div style={{ fontFamily: G.mo, fontSize: 10, color: G.mu, marginBottom: 6 }}>ÚLTIMAS PARTIDAS</div>
-              {[...progress.history].reverse().slice(0, 3).map((h, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: G.mu2, marginBottom: 4, fontFamily: G.mo }}>
-                  <span>{CAT_LABELS[h.category] || h.category}</span>
-                  <span>{h.score}/{h.total} — {new Date(h.date).toLocaleDateString('pt-BR')}</span>
-                </div>
-              ))}
-            </div>
-            <button
-              onClick={() => { if (window.confirm('Resetar todo o progresso?')) resetProgress() }}
-              style={{ marginTop: 10, background: 'none', border: `1px solid rgba(212,91,91,0.3)`, borderRadius: 5, padding: '4px 12px', color: G.rd, cursor: 'pointer', fontSize: 10, fontFamily: G.mo }}
-            >
-              resetar progresso
-            </button>
+      <div style={{ maxWidth: 680, margin: '0 auto', padding: '0 0 24px' }}>
+
+        {/* ── HEADER CLUBE ── */}
+        <div style={{
+          background: `linear-gradient(135deg, #1c1508 0%, #0e0e12 60%)`,
+          borderBottom: `2px solid ${G.au}`,
+          padding: '20px 24px 18px',
+          marginBottom: 24,
+          display: 'flex', alignItems: 'center', gap: 16,
+        }}>
+          <img src="/istepos-logo.png" alt="ISTEPOS" style={{ width: 52, height: 52, objectFit: 'contain' }} />
+          <div>
+            <div style={{ fontFamily: G.mo, fontSize: 18, color: G.au, letterSpacing: 3, lineHeight: 1 }}>ISTEPOS</div>
+            <div style={{ fontFamily: G.mo, fontSize: 10, color: G.mu, letterSpacing: 2, marginTop: 4 }}>PLAYBOOK QUIZ</div>
           </div>
-        )}
-        {/* Categoria selector */}
-        <div style={{ fontFamily: G.mo, fontSize: 11, color: G.mu, marginBottom: 12 }}>ESCOLHA A CATEGORIA</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {['Defense', 'Coverage', 'Situations', 'All'].map(cat => (
-            <button key={cat} onClick={() => startQuiz(cat)} style={{
-              background: G.aul, border: `1px solid rgba(201,162,39,0.3)`, borderRadius: 7,
-              padding: '12px 16px', textAlign: 'left', cursor: 'pointer', color: G.tx,
-              fontSize: 13, fontFamily: 'system-ui,sans-serif',
-            }}>
-              <span style={{ fontFamily: G.mo, color: G.au, marginRight: 8 }}>{CAT_LABELS[cat]}</span>
-              <span style={{ fontSize: 11, color: G.mu }}>{QUIZ_POOLS[cat].length} perguntas</span>
-            </button>
-          ))}
-          <button onClick={() => startQuiz('PlayQuiz')} style={{
-            background: 'rgba(93,175,108,0.08)', border: `1px solid rgba(93,175,108,0.3)`, borderRadius: 7,
-            padding: '12px 16px', textAlign: 'left', cursor: 'pointer', color: G.tx,
-            fontSize: 13, fontFamily: 'system-ui,sans-serif',
-          }}>
-            <span style={{ fontFamily: G.mo, color: G.gr, marginRight: 8 }}>Por Jogada</span>
-            <span style={{ fontSize: 11, color: G.mu }}>4 perguntas geradas da jogada</span>
-          </button>
+          {progress.xp > 0 && (
+            <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+              <div style={{ fontFamily: G.mo, fontSize: 22, color: G.au, lineHeight: 1 }}>{progress.xp}</div>
+              <div style={{ fontFamily: G.mo, fontSize: 9, color: G.mu, letterSpacing: 1 }}>XP</div>
+            </div>
+          )}
+        </div>
+
+        <div style={{ padding: '0 16px' }}>
+
+          {/* ── STATS (se há histórico) ── */}
+          {progress.history.length > 0 && (
+            <div style={{ background: G.s, border: `1px solid rgba(201,162,39,0.15)`, borderRadius: 12, padding: '16px 20px', marginBottom: 24 }}>
+              <div style={{ display: 'flex', gap: 16, marginBottom: 14 }}>
+                {['Defense', 'Coverage', 'Situations'].map(cat => {
+                  const { correct, total } = progress.byCategory[cat]
+                  const pct = total > 0 ? Math.round((correct / total) * 100) : 0
+                  const c = CATS.find(c => c.key === cat)
+                  return (
+                    <div key={cat} style={{ flex: 1, textAlign: 'center' }}>
+                      <div style={{ fontSize: 18, fontFamily: G.mo, color: c.accent, fontWeight: 'bold' }}>{total > 0 ? `${pct}%` : '—'}</div>
+                      <div style={{ fontSize: 9, color: G.mu, fontFamily: G.mo, marginTop: 2 }}>{c.label.toUpperCase()}</div>
+                      <div style={{ height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2, marginTop: 6 }}>
+                        {total > 0 && <div style={{ height: '100%', width: `${pct}%`, background: c.accent, borderRadius: 2 }} />}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ fontFamily: G.mo, fontSize: 10, color: G.mu2 }}>
+                  {[...progress.history].reverse().slice(0, 1).map((h, i) => (
+                    <span key={i}>{CAT_LABELS[h.category] || h.category} — {h.score}/{h.total} acertos</span>
+                  ))}
+                </div>
+                <button
+                  onClick={() => { if (window.confirm('Resetar todo o progresso?')) resetProgress() }}
+                  style={{ background: 'none', border: `1px solid rgba(212,91,91,0.3)`, borderRadius: 5, padding: '3px 10px', color: G.rd, cursor: 'pointer', fontSize: 9, fontFamily: G.mo }}
+                >resetar</button>
+              </div>
+            </div>
+          )}
+
+          {/* ── CATEGORIAS ── */}
+          <div style={{ fontFamily: G.mo, fontSize: 10, color: G.mu, letterSpacing: 2, marginBottom: 14 }}>ESCOLHA O MODO</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {CATS.map(({ key, icon, label, sub, accent, accentA }) => (
+              <button key={key} onClick={() => startQuiz(key)} style={{
+                background: accentA,
+                border: `1px solid ${accent}40`,
+                borderLeft: `4px solid ${accent}`,
+                borderRadius: 10,
+                padding: '16px 20px',
+                textAlign: 'left', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: 16,
+                transition: 'border-color .15s, background .15s',
+              }}>
+                <span style={{ fontSize: 28, lineHeight: 1 }}>{icon}</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: accent, fontFamily: G.mo, fontSize: 15, fontWeight: 'bold', letterSpacing: 1, marginBottom: 4 }}>{label.toUpperCase()}</div>
+                  <div style={{ color: G.mu2, fontSize: 12, lineHeight: 1.4 }}>{sub}</div>
+                </div>
+                <span style={{ color: accent, fontSize: 18, opacity: 0.7 }}>›</span>
+              </button>
+            ))}
+          </div>
+
         </div>
       </div>
     )
@@ -158,25 +185,44 @@ export default function QuizTab() {
   // ── PLAY SELECT SCREEN ──────────────────────────────────────
   if (screen === 'play-select') {
     return (
-      <div style={{ maxWidth: 540, margin: '0 auto', padding: '20px 0' }}>
-        <button onClick={() => setScreen('home')} style={{ background: 'none', border: 'none', color: G.mu, cursor: 'pointer', fontSize: 12, fontFamily: G.mo, marginBottom: 16, padding: 0 }}>← voltar</button>
-        <div style={{ fontFamily: G.mo, fontSize: 11, color: G.mu, marginBottom: 16 }}>ESCOLHA A JOGADA</div>
-        {FRONT_ORDER.filter(f => PLAYS_BY_FRONT[f]).map(front => (
-          <div key={front} style={{ marginBottom: 20 }}>
-            <div style={{ fontFamily: G.mo, fontSize: 10, color: G.au, marginBottom: 8, letterSpacing: 1 }}>{front.toUpperCase()}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {PLAYS_BY_FRONT[front].map(play => (
-                <button key={play.id} onClick={() => startPlayQuiz(play)} style={{
-                  background: G.s, border: `1px solid rgba(255,255,255,0.08)`, borderRadius: 7,
-                  padding: '10px 14px', textAlign: 'left', cursor: 'pointer', color: G.tx,
-                  fontSize: 12, fontFamily: 'system-ui,sans-serif',
-                }}>
-                  {play.name}
-                </button>
-              ))}
-            </div>
+      <div style={{ maxWidth: 680, margin: '0 auto', padding: '0 0 24px' }}>
+        <div style={{
+          background: `linear-gradient(135deg, #0e1a0e 0%, #0e0e12 60%)`,
+          borderBottom: `2px solid ${G.gr}`,
+          padding: '18px 24px',
+          marginBottom: 24,
+          display: 'flex', alignItems: 'center', gap: 16,
+        }}>
+          <button onClick={() => setScreen('home')} style={{ background: 'none', border: 'none', color: G.mu, cursor: 'pointer', fontSize: 20, padding: 0, lineHeight: 1 }}>‹</button>
+          <div>
+            <div style={{ fontFamily: G.mo, fontSize: 15, color: G.gr, letterSpacing: 2 }}>POR JOGADA</div>
+            <div style={{ fontFamily: G.mo, fontSize: 10, color: G.mu, marginTop: 3 }}>escolha uma jogada para treinar</div>
           </div>
-        ))}
+        </div>
+        <div style={{ padding: '0 16px' }}>
+          {FRONT_ORDER.filter(f => PLAYS_BY_FRONT[f]).map(front => (
+            <div key={front} style={{ marginBottom: 24 }}>
+              <div style={{ fontFamily: G.mo, fontSize: 10, color: G.au, letterSpacing: 2, marginBottom: 10, paddingBottom: 6, borderBottom: `1px solid rgba(201,162,39,0.15)` }}>{front.toUpperCase()} — {PLAYS_BY_FRONT[front].length} jogadas</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {PLAYS_BY_FRONT[front].map(play => (
+                  <button key={play.id} onClick={() => startPlayQuiz(play)} style={{
+                    background: G.s, border: `1px solid rgba(255,255,255,0.08)`,
+                    borderLeft: `3px solid ${G.gr}50`,
+                    borderRadius: 8,
+                    padding: '14px 18px', textAlign: 'left', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  }}>
+                    <div>
+                      <div style={{ color: G.tx, fontSize: 14, marginBottom: 3 }}>{play.name}</div>
+                      <div style={{ color: G.mu, fontSize: 11 }}>{play.stunt} · {play.modifier.length > 0 ? play.modifier.join('+') : 'sem blitz'} · {play.coverage}</div>
+                    </div>
+                    <span style={{ color: G.gr, fontSize: 18, opacity: 0.6 }}>›</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     )
   }
@@ -186,34 +232,41 @@ export default function QuizTab() {
     const finalScore = answers.filter(a => a.correct).length
     const pct  = Math.round((finalScore / quiz.length) * 100)
     const rank = pct >= 90 ? 'Mestre!' : pct >= 70 ? 'Veterano' : pct >= 50 ? 'Recruta Promissor' : 'Calouro'
+    const rankColor = pct >= 70 ? G.gr : pct >= 50 ? G.au : G.rd
     return (
-      <div style={{ maxWidth: 540, margin: '0 auto', textAlign: 'center', padding: '20px 0' }}>
-        <div style={{ fontFamily: G.sr, fontSize: 32, color: G.au, marginBottom: 4 }}>{rank}</div>
-        <div style={{ fontSize: 13, color: G.mu, fontFamily: G.mo, marginBottom: 20 }}>{finalScore}/{quiz.length} corretas — {pct}% de acerto</div>
-        <div style={{ height: 6, background: 'rgba(255,255,255,0.06)', borderRadius: 3, marginBottom: 24 }}>
-          <div style={{ height: '100%', width: `${pct}%`, background: pct >= 70 ? G.gr : pct >= 50 ? G.au : G.rd, borderRadius: 3 }} />
+      <div style={{ maxWidth: 680, margin: '0 auto', padding: '0 0 24px' }}>
+        <div style={{ background: `linear-gradient(135deg,#0e0e12,#161208)`, borderBottom: `2px solid ${rankColor}`, padding: '28px 24px', textAlign: 'center', marginBottom: 24 }}>
+          <div style={{ fontFamily: G.sr, fontSize: 36, color: rankColor, marginBottom: 6 }}>{rank}</div>
+          <div style={{ fontFamily: G.mo, fontSize: 13, color: G.mu }}>{finalScore}/{quiz.length} corretas — {pct}% de acerto</div>
+          <div style={{ height: 6, background: 'rgba(255,255,255,0.06)', borderRadius: 3, marginTop: 16, maxWidth: 320, margin: '16px auto 0' }}>
+            <div style={{ height: '100%', width: `${pct}%`, background: rankColor, borderRadius: 3 }} />
+          </div>
         </div>
-        <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
-          {answers.map((a, i) => (
-            <div key={i} style={{ background: G.s, border: `1px solid ${a.correct ? 'rgba(93,175,108,0.3)' : 'rgba(212,91,91,0.3)'}`, borderRadius: 7, padding: '10px 14px' }}>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 4 }}>
-                <span style={{ fontSize: 13, color: a.correct ? G.gr : G.rd }}>{a.correct ? '✓' : '✗'}</span>
-                <span style={{ fontSize: 11, color: G.mu2, flex: 1 }}>{a.q}</span>
+        <div style={{ padding: '0 16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+            {answers.map((a, i) => (
+              <div key={i} style={{ background: G.s, border: `1px solid ${a.correct ? 'rgba(93,175,108,0.25)' : 'rgba(212,91,91,0.25)'}`, borderLeft: `3px solid ${a.correct ? G.gr : G.rd}`, borderRadius: 8, padding: '12px 16px' }}>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                  <span style={{ fontSize: 16, color: a.correct ? G.gr : G.rd, marginTop: 1 }}>{a.correct ? '✓' : '✗'}</span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, color: G.mu2, marginBottom: a.correct ? 0 : 6, lineHeight: 1.5 }}>{a.q}</div>
+                    {!a.correct && <div style={{ fontSize: 12, color: G.am, lineHeight: 1.5 }}>{a.exp}</div>}
+                  </div>
+                </div>
               </div>
-              {!a.correct && <div style={{ fontSize: 10, color: G.am, fontFamily: G.mo, lineHeight: 1.4, paddingLeft: 20 }}>{a.exp}</div>}
-            </div>
-          ))}
-        </div>
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
-          {category === 'PlayQuiz' ? (
-            <>
-              <button onClick={() => startPlayQuiz(selectedPlay)} style={{ background: 'rgba(93,175,108,0.1)', border: `1px solid ${G.gr}`, borderRadius: 6, padding: '8px 24px', color: G.gr, cursor: 'pointer', fontSize: 12, fontFamily: G.mo }}>repetir jogada</button>
-              <button onClick={() => setScreen('play-select')} style={{ background: G.aul, border: `1px solid ${G.au}`, borderRadius: 6, padding: '8px 24px', color: G.au, cursor: 'pointer', fontSize: 12, fontFamily: G.mo }}>outra jogada</button>
-            </>
-          ) : (
-            <button onClick={() => startQuiz(category)} style={{ background: G.aul, border: `1px solid ${G.au}`, borderRadius: 6, padding: '8px 24px', color: G.au, cursor: 'pointer', fontSize: 12, fontFamily: G.mo }}>jogar novamente</button>
-          )}
-          <button onClick={() => setScreen('home')} style={{ background: G.s, border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 6, padding: '8px 24px', color: G.mu2, cursor: 'pointer', fontSize: 12, fontFamily: G.mo }}>mudar categoria</button>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            {category === 'PlayQuiz' ? (
+              <>
+                <button onClick={() => startPlayQuiz(selectedPlay)} style={{ flex: 1, background: 'rgba(93,175,108,0.12)', border: `1px solid ${G.gr}`, borderRadius: 8, padding: '12px', color: G.gr, cursor: 'pointer', fontSize: 13, fontFamily: G.mo }}>↺ repetir jogada</button>
+                <button onClick={() => setScreen('play-select')} style={{ flex: 1, background: G.aul, border: `1px solid ${G.au}`, borderRadius: 8, padding: '12px', color: G.au, cursor: 'pointer', fontSize: 13, fontFamily: G.mo }}>outra jogada →</button>
+              </>
+            ) : (
+              <button onClick={() => startQuiz(category)} style={{ flex: 1, background: G.aul, border: `1px solid ${G.au}`, borderRadius: 8, padding: '12px', color: G.au, cursor: 'pointer', fontSize: 13, fontFamily: G.mo }}>↺ jogar novamente</button>
+            )}
+            <button onClick={() => setScreen('home')} style={{ flex: 1, background: G.s, border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 8, padding: '12px', color: G.mu2, cursor: 'pointer', fontSize: 13, fontFamily: G.mo }}>início</button>
+          </div>
         </div>
       </div>
     )
@@ -223,9 +276,10 @@ export default function QuizTab() {
   const curr      = quiz[qi]
   const foundPlay = curr.playId ? (PLAYS.find(p => p.id === curr.playId) ?? null) : null
   const score     = answers.filter(a => a.correct).length
+  const catInfo   = CATS.find(c => c.key === category) || CATS[0]
 
   return (
-    <div style={{ maxWidth: 560, margin: '0 auto' }}>
+    <div style={{ maxWidth: 680, margin: '0 auto', padding: '0 0 24px' }}>
       {/* Flash overlay */}
       {screenFlash && (
         <div style={{
@@ -238,47 +292,51 @@ export default function QuizTab() {
       {xpFloat && (
         <div key={xpFloat.key} style={{
           position: 'fixed', top: '40%', left: '50%', transform: 'translateX(-50%)',
-          fontSize: 24, color: G.gr, fontFamily: G.mo, fontWeight: 'bold',
+          fontSize: 28, color: G.gr, fontFamily: G.mo, fontWeight: 'bold',
           animation: 'floatUp 0.8s ease forwards', pointerEvents: 'none', zIndex: 101,
         }}>+1 XP</div>
       )}
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <span style={{ fontSize: 11, color: G.mu, fontFamily: G.mo }}>{qi + 1}/{quiz.length}</span>
-        <span style={{ fontSize: 11, color: G.au, fontFamily: G.mo }}>{score} XP</span>
+      <div style={{ borderBottom: `1px solid ${catInfo.accent}30`, padding: '14px 16px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 12 }}>
+        <button onClick={() => setScreen('home')} style={{ background: 'none', border: 'none', color: G.mu, cursor: 'pointer', fontSize: 20, padding: 0, lineHeight: 1 }}>‹</button>
+        <div style={{ flex: 1 }}>
+          <div style={{ height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 2 }}>
+            <div style={{ height: '100%', width: `${((qi + 1) / quiz.length) * 100}%`, background: catInfo.accent, borderRadius: 2, transition: 'width .3s ease' }} />
+          </div>
+        </div>
+        <span style={{ fontFamily: G.mo, fontSize: 11, color: G.mu, whiteSpace: 'nowrap' }}>{qi + 1} / {quiz.length}</span>
+        <span style={{ fontFamily: G.mo, fontSize: 13, color: G.au, minWidth: 48, textAlign: 'right' }}>{score} XP</span>
       </div>
-      <div style={{ height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2, marginBottom: 20 }}>
-        <div style={{ height: '100%', width: `${(qi / quiz.length) * 100}%`, background: G.au, borderRadius: 2 }} />
-      </div>
+      <div style={{ padding: '0 16px' }}>
       {/* FieldDiagram (quando playId existe) */}
       {foundPlay && (
-        <div style={{ marginBottom: 14, borderRadius: 8, overflow: 'hidden' }}>
+        <div style={{ marginBottom: 16, borderRadius: 10, overflow: 'hidden', border: `1px solid rgba(255,255,255,0.06)` }}>
           <FieldDiagram play={foundPlay} onPlayerClick={() => {}} selectedPlayer={null} />
         </div>
       )}
       {/* Pergunta */}
-      <div style={{ background: G.s, border: `1px solid rgba(201,162,39,0.2)`, borderRadius: 10, padding: '16px 18px', marginBottom: 14 }}>
-        <div style={{ fontSize: 11, color: G.mu, fontFamily: G.mo, marginBottom: 8 }}>SITUAÇÃO</div>
-        <div style={{ fontSize: 15, color: G.tx, lineHeight: 1.6, fontFamily: G.sr }}>{curr.q}</div>
+      <div style={{ background: G.s, borderLeft: `4px solid ${catInfo.accent}`, borderRadius: 10, padding: '18px 20px', marginBottom: 16 }}>
+        <div style={{ fontSize: 10, color: catInfo.accent, fontFamily: G.mo, marginBottom: 10, letterSpacing: 1 }}>PERGUNTA {qi + 1}</div>
+        <div style={{ fontSize: 17, color: G.tx, lineHeight: 1.6, fontFamily: G.sr }}>{curr.q}</div>
       </div>
       {/* Opções */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
         {curr.opts.map((o, i) => {
-          let bc = 'rgba(201,162,39,0.15)', tc = G.mu2, bg = G.s
+          let bc = `${catInfo.accent}30`, tc = G.mu2, bg = G.s
           let animStyle = {}
           if (chosen !== null) {
-            if (i === curr.ans)                            { bc = `${G.gr}50`; tc = G.gr; bg = `${G.gr}0a` }
-            else if (i === chosen && chosen !== curr.ans)  { bc = `${G.rd}50`; tc = G.rd; bg = `${G.rd}0a`; animStyle = { animation: 'shake 0.3s ease' } }
+            if (i === curr.ans)                            { bc = `${G.gr}60`; tc = G.gr; bg = `${G.gr}0d` }
+            else if (i === chosen && chosen !== curr.ans)  { bc = `${G.rd}60`; tc = G.rd; bg = `${G.rd}0d`; animStyle = { animation: 'shake 0.3s ease' } }
           }
           return (
             <button key={i} onClick={() => pick(i)} style={{
-              background: bg, border: `1px solid ${bc}`, borderRadius: 7,
-              padding: '10px 14px', textAlign: 'left',
+              background: bg, border: `1px solid ${bc}`, borderRadius: 9,
+              padding: '14px 18px', textAlign: 'left',
               cursor: chosen !== null ? 'default' : 'pointer',
-              color: tc, fontSize: 12, lineHeight: 1.4, transition: 'all .15s',
+              color: tc, fontSize: 14, lineHeight: 1.4, transition: 'all .15s',
               fontFamily: 'system-ui,sans-serif', ...animStyle,
             }}>
-              <span style={{ fontFamily: G.mo, color: G.mu, marginRight: 8, fontSize: 10 }}>{String.fromCharCode(65 + i)}.</span>{o}
+              <span style={{ fontFamily: G.mo, color: catInfo.accent, marginRight: 10, fontSize: 11, opacity: 0.7 }}>{String.fromCharCode(65 + i)}.</span>{o}
             </button>
           )
         })}
@@ -286,14 +344,15 @@ export default function QuizTab() {
       {/* Explicação + próxima */}
       {chosen !== null && (
         <div>
-          <div style={{ background: chosen === curr.ans ? `${G.gr}12` : `${G.am}12`, border: `1px solid ${chosen === curr.ans ? `${G.gr}30` : `${G.am}30`}`, borderRadius: 7, padding: '10px 14px', marginBottom: 12, fontSize: 11, color: G.mu2, lineHeight: 1.5 }}>
-            <span style={{ color: chosen === curr.ans ? G.gr : G.am, fontFamily: G.mo, marginRight: 6 }}>{chosen === curr.ans ? '✓ CORRETO' : '→ REVISÃO'}</span>{curr.exp}
+          <div style={{ background: chosen === curr.ans ? `${G.gr}12` : `${G.am}12`, border: `1px solid ${chosen === curr.ans ? `${G.gr}30` : `${G.am}30`}`, borderRadius: 9, padding: '14px 18px', marginBottom: 12, fontSize: 13, color: G.mu2, lineHeight: 1.6 }}>
+            <span style={{ color: chosen === curr.ans ? G.gr : G.am, fontFamily: G.mo, marginRight: 8, fontSize: 11 }}>{chosen === curr.ans ? '✓ CORRETO' : '→ REVISÃO'}</span>{curr.exp}
           </div>
-          <button onClick={next} style={{ width: '100%', background: G.aul, border: `1px solid ${G.au}`, borderRadius: 6, padding: 9, color: G.au, cursor: 'pointer', fontSize: 12, fontFamily: G.mo }}>
+          <button onClick={next} style={{ width: '100%', background: G.aul, border: `1px solid ${G.au}`, borderRadius: 9, padding: 14, color: G.au, cursor: 'pointer', fontSize: 14, fontFamily: G.mo }}>
             {qi + 1 >= quiz.length ? 'ver resultado →' : 'próxima →'}
           </button>
         </div>
       )}
+      </div>
     </div>
   )
 }
