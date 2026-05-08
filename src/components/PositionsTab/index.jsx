@@ -26,25 +26,26 @@ const POS = {
 }
 
 function PosCard({ p, isOff, sel, onClick }) {
-  const ac = isOff ? G.bl : G.rd
+  const ac = isOff ? G.bl : G.cr
   return (
     <div onClick={onClick} style={{
-      background: sel ? G.aub : G.s,
-      border: `1px solid ${sel ? G.au : 'rgba(201,162,39,0.15)'}`,
-      borderRadius: 8, padding: '12px 14px', cursor: 'pointer', transition: 'border-color .2s',
+      background: G.s,
+      border: `1px solid ${sel ? ac : 'rgba(255,255,255,0.07)'}`,
+      borderLeft: `4px solid ${ac}`,
+      borderRadius: 10, padding: '16px 18px', cursor: 'pointer', transition: 'border-color .2s',
     }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
         <div>
-          <div style={{ fontSize: 22, fontWeight: 'bold', fontFamily: G.sr, color: G.tx, lineHeight: 1 }}>{p.abbr}</div>
-          <div style={{ fontSize: 10, color: G.mu, fontFamily: G.mo, marginTop: 2 }}>{p.name}</div>
+          <div style={{ fontSize: 26, fontWeight: 'bold', fontFamily: G.sr, color: G.wh, lineHeight: 1 }}>{p.abbr}</div>
+          <div style={{ fontSize: 11, color: G.mu, fontFamily: G.mo, marginTop: 3 }}>{p.name}</div>
         </div>
-        <span style={{ background: `${ac}18`, border: `1px solid ${ac}40`, borderRadius: 4, padding: '2px 7px', fontSize: 10, color: ac, fontFamily: G.mo, whiteSpace: 'nowrap' }}>{p.rpg}</span>
+        <span style={{ background: `${ac}20`, border: `1px solid ${ac}50`, borderRadius: 5, padding: '3px 9px', fontSize: 10, color: ac, fontFamily: G.mo, whiteSpace: 'nowrap' }}>{p.rpg}</span>
       </div>
-      <div style={{ fontSize: 11, color: G.mu2, lineHeight: 1.5 }}>{p.role}</div>
+      <div style={{ fontSize: 13, color: G.mu2, lineHeight: 1.5 }}>{p.role}</div>
       {sel && (
-        <div style={{ marginTop: 10, borderTop: `1px solid rgba(201,162,39,0.12)`, paddingTop: 10 }}>
-          <div style={{ fontSize: 11, color: '#c8c0b0', lineHeight: 1.6, marginBottom: 10 }}>{p.detail}</div>
-          <StatBar label="FORÇA"      val={p.stats.Força}      col={G.rd} />
+        <div style={{ marginTop: 12, borderTop: `1px solid rgba(255,255,255,0.07)`, paddingTop: 12 }}>
+          <div style={{ fontSize: 13, color: G.wh, lineHeight: 1.6, marginBottom: 12 }}>{p.detail}</div>
+          <StatBar label="FORÇA"      val={p.stats.Força}      col={G.cr} />
           <StatBar label="VELOCIDADE" val={p.stats.Velocidade} col={G.bl} />
           <StatBar label="LEITURA"    val={p.stats.Leitura}    col={G.au} />
         </div>
@@ -70,12 +71,12 @@ export default function PositionsTab() {
           }}>{s === 'offense' ? '⚔ ATAQUE' : '🛡 DEFESA'}</button>
         ))}
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(180px,1fr))', gap: 10 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 12 }}>
         {POS[side].map((p, i) => (
           <PosCard key={i} p={p} isOff={isOff} sel={sel === i} onClick={() => setSel(sel === i ? null : i)} />
         ))}
       </div>
-      <div style={{ marginTop: 12, fontSize: 11, color: G.mu, fontFamily: G.mo, textAlign: 'center' }}>clique em uma carta para expandir</div>
+      <div style={{ marginTop: 14, fontSize: 11, color: G.mu, fontFamily: G.mo, textAlign: 'center' }}>clique em uma carta para expandir</div>
     </div>
   )
 }

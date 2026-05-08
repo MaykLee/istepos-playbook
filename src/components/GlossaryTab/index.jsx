@@ -28,13 +28,13 @@ export default function GlossaryTab() {
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         {filtered.map((g, i) => {
-          const cc = g.cat === 'Ataque' ? G.bl : g.cat === 'Defesa' ? G.rd : g.cat === 'Rotas' ? G.am : G.mu
+          const cc = g.cat === 'Ataque' ? G.bl : g.cat === 'Defesa' ? G.cr : g.cat === 'Rotas' ? G.am : G.mu
           return (
-            <div key={i} style={{ background: G.s, border: `1px solid rgba(201,162,39,0.1)`, borderRadius: 7, padding: '10px 14px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-              <span style={{ background: `${cc}18`, border: `1px solid ${cc}30`, borderRadius: 4, padding: '2px 7px', fontSize: 9, color: cc, fontFamily: G.mo, whiteSpace: 'nowrap', marginTop: 1 }}>{g.cat}</span>
+            <div key={i} style={{ background: G.s, border: `1px solid rgba(255,255,255,0.06)`, borderLeft: `3px solid ${cc}`, borderRadius: 8, padding: '14px 18px', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+              <span style={{ background: `${cc}18`, border: `1px solid ${cc}30`, borderRadius: 4, padding: '3px 8px', fontSize: 10, color: cc, fontFamily: G.mo, whiteSpace: 'nowrap', marginTop: 1 }}>{g.cat}</span>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 'bold', fontFamily: G.sr, color: G.tx, marginBottom: 3 }}>{g.term}</div>
-                <div style={{ fontSize: 11, color: G.mu2, lineHeight: 1.5 }}>{g.def}</div>
+                <div style={{ fontSize: 15, fontWeight: 'bold', fontFamily: G.sr, color: G.wh, marginBottom: 4 }}>{g.term}</div>
+                <div style={{ fontSize: 13, color: G.mu2, lineHeight: 1.6 }}>{g.def}</div>
               </div>
             </div>
           )

@@ -16,7 +16,7 @@ export default function App() {
   const [tab, setTab] = useState('playbook')
 
   return (
-    <div style={{ background: G.bg, minHeight: '100vh', color: G.tx, fontFamily: 'system-ui,sans-serif' }}>
+    <div style={{ background: 'linear-gradient(160deg, #1e0008 0%, #0e0e12 55%, #0e0e12 100%)', minHeight: '100vh', color: G.wh, fontFamily: 'system-ui,sans-serif' }}>
 
       {/* ── HEADER ── */}
       <div style={{
