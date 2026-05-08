@@ -17,13 +17,23 @@ export default function App() {
 
   return (
     <div style={{ background: G.bg, minHeight: '100vh', color: G.tx, fontFamily: 'system-ui,sans-serif' }}>
-      <div style={{ borderBottom: `1px solid ${G.aul}`, padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 14 }}>
-        <div style={{ fontFamily: G.sr, fontSize: 18, color: G.au, letterSpacing: 2 }}>ISTEPOS</div>
-        <div style={{ width: 1, height: 14, background: G.aul }} />
-        <div style={{ fontSize: 10, color: G.mu, fontFamily: G.mo, letterSpacing: 1 }}>DEFENSIVE PLAYBOOK — 2026</div>
+
+      {/* ── HEADER ── */}
+      <div style={{
+        background: `linear-gradient(90deg, #1a0408 0%, #0e0e12 60%)`,
+        borderBottom: `3px solid ${G.cr}`,
+        padding: '12px 24px',
+        display: 'flex', alignItems: 'center', gap: 16,
+      }}>
+        <img src="/istepos-logo.png" alt="ISTEPOS" style={{ width: 44, height: 44, objectFit: 'contain' }} />
+        <div>
+          <div style={{ fontFamily: G.mo, fontSize: 20, color: G.wh, letterSpacing: 3, lineHeight: 1 }}>ISTEPOS</div>
+          <div style={{ fontFamily: G.mo, fontSize: 9, color: G.cr, letterSpacing: 2, marginTop: 3 }}>DEFENSIVE PLAYBOOK · 2026</div>
+        </div>
       </div>
 
-      <div style={{ display: 'flex', borderBottom: `1px solid ${G.aul}`, padding: '0 20px', overflowX: 'auto' }}>
+      {/* ── TABS ── */}
+      <div style={{ display: 'flex', borderBottom: `1px solid rgba(196,18,48,0.2)`, padding: '0 20px', overflowX: 'auto', background: '#100608' }}>
         {TABS.map(t => (
           <button
             key={t.id}
@@ -31,14 +41,15 @@ export default function App() {
             style={{
               background: 'none',
               border: 'none',
-              borderBottom: `2px solid ${tab === t.id ? G.au : 'transparent'}`,
-              color: tab === t.id ? G.au : G.mu,
-              padding: '11px 14px',
+              borderBottom: `3px solid ${tab === t.id ? G.cr : 'transparent'}`,
+              color: tab === t.id ? G.wh : G.mu,
+              padding: '12px 18px',
               cursor: 'pointer',
-              fontSize: 12,
+              fontSize: 13,
               fontFamily: G.mo,
               whiteSpace: 'nowrap',
-              transition: 'color .2s',
+              transition: 'color .2s, border-color .2s',
+              letterSpacing: 1,
             }}
           >
             {t.label}
@@ -46,7 +57,7 @@ export default function App() {
         ))}
       </div>
 
-      <div style={{ padding: 20, maxWidth: 900, margin: '0 auto' }}>
+      <div style={{ padding: 20, maxWidth: 960, margin: '0 auto' }}>
         {tab === 'pos'      && <PositionsTab />}
         {tab === 'glos'     && <GlossaryTab />}
         {tab === 'quiz'     && <QuizTab />}
