@@ -16,11 +16,11 @@ export default function App() {
   const [tab, setTab] = useState('playbook')
 
   return (
-    <div style={{ background: 'linear-gradient(170deg, #5a0018 0%, #2a000c 35%, #0e0e12 70%)', minHeight: '100vh', color: G.wh, fontFamily: 'system-ui,sans-serif' }}>
+    <div style={{ background: G.bg, minHeight: '100vh', color: G.wh, fontFamily: 'system-ui,sans-serif' }}>
 
       {/* ── HEADER ── */}
       <div style={{
-        background: `linear-gradient(90deg, #6a0020 0%, #3a000e 60%, #1a0008 100%)`,
+        background: `rgba(0,0,0,0.25)`,
         borderBottom: `3px solid ${G.cr}`,
         padding: '12px 24px',
         display: 'flex', alignItems: 'center', gap: 16,
