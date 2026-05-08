@@ -7,16 +7,17 @@ describe('QuizTab', () => {
 
   it('mostra seletor de categoria na tela inicial', () => {
     render(<QuizTab />)
-    expect(screen.getByText('Defesa')).toBeTruthy()
-    expect(screen.getByText('Coberturas')).toBeTruthy()
-    expect(screen.getByText('Situações')).toBeTruthy()
-    expect(screen.getByText('Todas')).toBeTruthy()
+    expect(screen.getByText('DEFESA')).toBeTruthy()
+    expect(screen.getByText('COBERTURAS')).toBeTruthy()
+    expect(screen.getByText('SITUAÇÕES')).toBeTruthy()
+    expect(screen.getByText('MODO GERAL')).toBeTruthy()
+    expect(screen.getByText('POR JOGADA')).toBeTruthy()
   })
 
   it('clicar em Defesa leva para a tela de quiz', () => {
     render(<QuizTab />)
-    fireEvent.click(screen.getByText('Defesa'))
-    expect(screen.getByText(/1\//)).toBeTruthy()
+    fireEvent.click(screen.getByText('DEFESA'))
+    expect(screen.getByText(/1\s*\/\s*\d+/)).toBeTruthy()
   })
 
   it('mostra painel de stats quando há histórico no localStorage', () => {
@@ -30,6 +31,7 @@ describe('QuizTab', () => {
       }
     }))
     render(<QuizTab />)
-    expect(screen.getByText('15 XP')).toBeTruthy()
+    expect(screen.getByText('15')).toBeTruthy()
+    expect(screen.getAllByText('XP').length).toBeGreaterThan(0)
   })
 })

@@ -3,6 +3,7 @@ import { G } from '../../tokens.js'
 import { QUIZ_DEFENSE, QUIZ_COVERAGE, QUIZ_SITUATIONS, generatePlayQuiz } from '../../data/quiz.js'
 import { PLAYS, PLAYS_BY_FRONT, FRONT_ORDER } from '../../data/plays.js'
 import FieldDiagram from '../PlaybookTab/FieldDiagram.jsx'
+import GlossaryText from '../GlossaryText.jsx'
 import useQuizProgress from './useQuizProgress.js'
 
 const QUIZ_POOLS = {
@@ -344,8 +345,34 @@ export default function QuizTab() {
       {/* Explicação + próxima */}
       {chosen !== null && (
         <div>
-          <div style={{ background: chosen === curr.ans ? `${G.gr}12` : `${G.am}12`, border: `1px solid ${chosen === curr.ans ? `${G.gr}30` : `${G.am}30`}`, borderRadius: 9, padding: '14px 18px', marginBottom: 12, fontSize: 13, color: G.mu2, lineHeight: 1.6 }}>
-            <span style={{ color: chosen === curr.ans ? G.gr : G.am, fontFamily: G.mo, marginRight: 8, fontSize: 11 }}>{chosen === curr.ans ? '✓ CORRETO' : '→ REVISÃO'}</span>{curr.exp}
+          {/* Contexto do erro: o que a opção errada significa */}
+          {chosen !== curr.ans && (
+            <div style={{
+              background: `${G.rd}0d`, border: `1px solid ${G.rd}30`,
+              borderRadius: 9, padding: '12px 18px', marginBottom: 8,
+              fontSize: 13, color: G.mu2, lineHeight: 1.6,
+            }}>
+              <span style={{ color: G.rd, fontFamily: G.mo, fontSize: 11, marginRight: 8 }}>✗ VOCÊ ESCOLHEU</span>
+              <span style={{ color: G.wh, fontFamily: G.mo }}>{curr.opts[chosen]}</span>
+              {curr.optExps && curr.optExps[curr.opts[chosen]] && (
+                <>
+                  <span style={{ color: G.mu }}> — </span>
+                  <GlossaryText>{curr.optExps[curr.opts[chosen]]}</GlossaryText>
+                </>
+              )}
+            </div>
+          )}
+          {/* Resposta correta + explicação */}
+          <div style={{
+            background: chosen === curr.ans ? `${G.gr}12` : `${G.am}12`,
+            border: `1px solid ${chosen === curr.ans ? `${G.gr}30` : `${G.am}30`}`,
+            borderRadius: 9, padding: '14px 18px', marginBottom: 12,
+            fontSize: 13, color: G.mu2, lineHeight: 1.6,
+          }}>
+            <span style={{ color: chosen === curr.ans ? G.gr : G.am, fontFamily: G.mo, marginRight: 8, fontSize: 11 }}>
+              {chosen === curr.ans ? '✓ CORRETO' : '→ REVISÃO'}
+            </span>
+            <GlossaryText>{curr.exp}</GlossaryText>
           </div>
           <button onClick={next} style={{ width: '100%', background: G.aul, border: `1px solid ${G.au}`, borderRadius: 9, padding: 14, color: G.au, cursor: 'pointer', fontSize: 14, fontFamily: G.mo }}>
             {qi + 1 >= quiz.length ? 'ver resultado →' : 'próxima →'}

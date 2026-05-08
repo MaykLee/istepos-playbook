@@ -39,10 +39,14 @@ export function generatePlayQuiz(play) {
     return a
   }
 
-  function mkq(q, correct, wrongPool, exp) {
+  function mkq(q, correct, wrongPool, exp, wrongExpMap) {
     const wrongs = sh(wrongPool).slice(0, 3)
     const all = sh([correct, ...wrongs])
-    return { q, opts: all, ans: all.indexOf(correct), exp, playId: play.id }
+    const optExps = {}
+    if (wrongExpMap) {
+      wrongs.forEach(w => { if (wrongExpMap[w] != null) optExps[w] = wrongExpMap[w] })
+    }
+    return { q, opts: all, ans: all.indexOf(correct), exp, playId: play.id, optExps }
   }
 
   const COV_LABEL = { Blue: 'Cover 2 (Blue)', Green: 'Cover 3 (Green)', Orange: 'Cover 4 (Orange)', Silver: 'Cover 2 Man (Silver)' }
@@ -86,6 +90,7 @@ export function generatePlayQuiz(play) {
     play.front,
     ['Stack', '55', 'Angle', 'LSU Prevent', 'Dam'].filter(f => f !== play.front),
     FRONT_EXP[play.front] || play.front,
+    FRONT_EXP,
   ))
 
   // Q2: Stunt
@@ -94,6 +99,7 @@ export function generatePlayQuiz(play) {
     play.stunt,
     ['Pinch', 'Contain', 'Slash', 'Wiz', 'Axe'].filter(s => s !== play.stunt),
     STUNT_EXP[play.stunt] || play.stunt,
+    STUNT_EXP,
   ))
 
   // Q3: Blitz
@@ -103,6 +109,7 @@ export function generatePlayQuiz(play) {
       'Sem blitz',
       ['Buck', 'Will', 'Mike', 'Fire'],
       'Essa jogada não tem blitz. Os LBs mantêm cobertura e responsabilidade de gap.',
+      MOD_EXP,
     ))
   } else {
     const correctMod = play.modifier.join(' + ')
@@ -111,15 +118,19 @@ export function generatePlayQuiz(play) {
       correctMod,
       ['Buck', 'Will', 'Mike', 'Fire', 'WiM', 'BuD', 'RoD', 'Dog'].filter(m => !play.modifier.includes(m)),
       MOD_EXP[play.modifier[0]] || `${correctMod} blitza.`,
+      MOD_EXP,
     ))
   }
 
   // Q4: Cobertura
+  const covLabelToExp = {}
+  Object.keys(COV_LABEL).forEach(k => { covLabelToExp[COV_LABEL[k]] = COV_EXP[k] })
   qs.push(mkq(
     'Qual é a cobertura traseira?',
     COV_LABEL[play.coverage],
     ['Blue', 'Green', 'Orange', 'Silver'].filter(c => c !== play.coverage).map(c => COV_LABEL[c]),
     COV_EXP[play.coverage] || play.coverage,
+    covLabelToExp,
   ))
 
   return qs

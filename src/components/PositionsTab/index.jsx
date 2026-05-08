@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { G } from '../../tokens.js'
+import { BASES } from '../../data/formations.js'
 import StatBar from '../shared/StatBar.jsx'
 
 const POS = {
@@ -25,13 +26,99 @@ const POS = {
   ],
 }
 
+// Tokens defensivos com coordenadas do Stack base
+const base = BASES.Stack
+const DEF_TOKENS = [
+  { id: 'E_left',   label: 'DE', abbr: 'E',  x: base.E_left.x,   y: base.E_left.y   },
+  { id: 'N',        label: 'NT', abbr: 'N',  x: base.N.x,        y: base.N.y        },
+  { id: 'E_right',  label: 'DE', abbr: 'E',  x: base.E_right.x,  y: base.E_right.y  },
+  { id: 'W',        label: 'W',  abbr: 'W',  x: base.W.x,        y: base.W.y        },
+  { id: 'M',        label: 'M',  abbr: 'M',  x: base.M.x,        y: base.M.y        },
+  { id: 'B',        label: 'B',  abbr: 'B',  x: base.B.x,        y: base.B.y        },
+  { id: 'R',        label: 'R',  abbr: 'R',  x: base.R.x,        y: base.R.y        },
+  { id: 'D',        label: 'D',  abbr: 'D',  x: base.D.x,        y: base.D.y        },
+  { id: 'CB_left',  label: 'CB', abbr: 'CB', x: base.CB_left.x,  y: base.CB_left.y  },
+  { id: 'CB_right', label: 'CB', abbr: 'CB', x: base.CB_right.x, y: base.CB_right.y },
+  { id: 'FS',       label: 'FS', abbr: 'FS', x: base.FS.x,       y: base.FS.y       },
+]
+
+function tokenColor(id) {
+  if (id === 'N' || id.startsWith('E_')) return G.cr
+  if (['M','B','W','D','R'].includes(id))  return G.am
+  if (id.startsWith('CB'))                 return G.bl
+  if (id === 'FS')                         return G.gr
+  return G.mu
+}
+
+function DefenseField({ selAbbr }) {
+  const FW = 400, FH = 220, LOS = 190
+  return (
+    <div style={{ borderRadius: 10, overflow: 'hidden', border: `1px solid rgba(196,18,48,0.2)`, marginBottom: 20 }}>
+      <svg viewBox={`0 0 ${FW} ${FH}`} style={{ width: '100%', display: 'block' }}>
+        {/* Campo */}
+        <rect x={0} y={0} width={FW} height={FH} fill="rgba(15,32,15,0.95)" />
+        {[1,2,3,4,5,6,7,8,9].map(n => (
+          <line key={n} x1={n*FW/10} y1={0} x2={n*FW/10} y2={FH}
+            stroke="rgba(255,255,255,0.04)" strokeWidth="0.5" />
+        ))}
+        {/* LOS */}
+        <line x1={0} y1={LOS} x2={FW} y2={LOS} stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
+        <text x={FW/2} y={LOS + 13} textAnchor="middle"
+          fill="rgba(255,255,255,0.15)" fontSize="8" fontFamily="'Courier New',monospace">
+          LINHA DE SCRIMMAGE
+        </text>
+        {/* Silhueta da linha ofensiva */}
+        {[160,180,200,220,240].map((x, i) => (
+          <circle key={i} cx={x} cy={196} r={11}
+            fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+        ))}
+        <text x={200} y={215} textAnchor="middle"
+          fill="rgba(255,255,255,0.1)" fontSize="7" fontFamily="'Courier New',monospace">ATAQUE</text>
+
+        {/* Tokens defensivos */}
+        {DEF_TOKENS.map(p => {
+          const isSelected = selAbbr && p.abbr === selAbbr
+          const col = tokenColor(p.id)
+          return (
+            <g key={p.id}>
+              <circle cx={p.x} cy={p.y} r={14} fill="rgba(10,10,14,0.92)" />
+              <circle cx={p.x} cy={p.y} r={14}
+                fill={isSelected ? `${col}55` : `${col}18`}
+                stroke={isSelected ? col : `${col}55`}
+                strokeWidth={isSelected ? 2.5 : 1.5}
+              />
+              {isSelected && (
+                <circle cx={p.x} cy={p.y} r={18}
+                  fill="none" stroke={col} strokeWidth="1" strokeOpacity="0.4"
+                  strokeDasharray="3,3"
+                />
+              )}
+              <text x={p.x} y={p.y + 4} textAnchor="middle"
+                fill={isSelected ? col : `${col}bb`}
+                fontSize={isSelected ? '9' : '8'} fontFamily="'Courier New',monospace"
+                style={{ pointerEvents: 'none' }}>
+                {p.label}
+              </text>
+            </g>
+          )
+        })}
+      </svg>
+      <div style={{ background: 'rgba(10,10,14,0.7)', borderTop: '1px solid rgba(196,18,48,0.1)', padding: '6px 14px' }}>
+        <span style={{ fontFamily: G.mo, fontSize: 9, color: G.mu, letterSpacing: 1 }}>
+          FORMAÇÃO BASE — STACK · {selAbbr ? `${selAbbr} DESTACADO` : 'SELECIONE UMA POSIÇÃO'}
+        </span>
+      </div>
+    </div>
+  )
+}
+
 function PosCard({ p, isOff, sel, onClick }) {
   const ac = isOff ? G.bl : G.cr
   return (
     <div onClick={onClick} style={{
       background: G.s,
-      border: `1px solid ${sel ? ac : 'rgba(255,255,255,0.07)'}`,
-      borderLeft: `4px solid ${ac}`,
+      border: `1px solid ${sel ? ac : `${ac}25`}`,
+      borderLeft: `4px solid ${sel ? ac : `${ac}50`}`,
       borderRadius: 10, padding: '16px 18px', cursor: 'pointer', transition: 'border-color .2s',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
@@ -55,28 +142,69 @@ function PosCard({ p, isOff, sel, onClick }) {
 }
 
 export default function PositionsTab() {
-  const [side, setSide] = useState('offense')
+  const [side, setSide] = useState('defense')
   const [sel, setSel]   = useState(null)
   const isOff = side === 'offense'
+  const ac = isOff ? G.bl : G.cr
+  const selAbbr = sel !== null ? POS[side][sel]?.abbr : null
+
   return (
-    <div>
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-        {['offense','defense'].map(s => (
-          <button key={s} onClick={() => { setSide(s); setSel(null) }} style={{
-            background: side === s ? (s === 'offense' ? `${G.bl}20` : `${G.rd}20`) : 'none',
-            border: `1px solid ${side === s ? (s === 'offense' ? G.bl : G.rd) : 'rgba(201,162,39,0.2)'}`,
-            borderRadius: 6, padding: '6px 16px',
-            color: side === s ? (s === 'offense' ? G.bl : G.rd) : G.mu,
-            cursor: 'pointer', fontSize: 12, fontFamily: G.mo,
-          }}>{s === 'offense' ? '⚔ ATAQUE' : '🛡 DEFESA'}</button>
-        ))}
+    <div style={{ maxWidth: 680, margin: '0 auto', paddingBottom: 24 }}>
+
+      {/* Header */}
+      <div style={{
+        background: `linear-gradient(135deg, ${isOff ? '#08101a' : '#1a0508'} 0%, #0e0e12 60%)`,
+        borderBottom: `2px solid ${ac}`,
+        padding: '18px 24px',
+        marginBottom: 24,
+        display: 'flex', alignItems: 'center', gap: 16,
+      }}>
+        <img src="/istepos-logo.png" alt="ISTEPOS" style={{ width: 44, height: 44, objectFit: 'contain' }} />
+        <div>
+          <div style={{ fontFamily: G.mo, fontSize: 15, color: ac, letterSpacing: 2 }}>POSIÇÕES</div>
+          <div style={{ fontFamily: G.mo, fontSize: 10, color: G.mu, marginTop: 3 }}>conheça cada jogador em campo</div>
+        </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 12 }}>
-        {POS[side].map((p, i) => (
-          <PosCard key={i} p={p} isOff={isOff} sel={sel === i} onClick={() => setSel(sel === i ? null : i)} />
-        ))}
+
+      <div style={{ padding: '0 16px' }}>
+
+        {/* Seletor lado */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+          {['offense','defense'].map(s => {
+            const sAc = s === 'offense' ? G.bl : G.cr
+            const isActive = side === s
+            return (
+              <button key={s} onClick={() => { setSide(s); setSel(null) }} style={{
+                flex: 1,
+                background: isActive ? `${sAc}18` : 'transparent',
+                border: `1px solid ${isActive ? sAc + '60' : sAc + '20'}`,
+                borderLeft: `4px solid ${isActive ? sAc : sAc + '25'}`,
+                borderRadius: 10, padding: '12px 18px',
+                color: isActive ? sAc : G.mu,
+                cursor: 'pointer', fontSize: 13, fontFamily: G.mo, letterSpacing: 1,
+                transition: 'all .15s',
+              }}>
+                {s === 'offense' ? '⚔️  ATAQUE' : '🛡️  DEFESA'}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Diagrama de campo (só defesa) */}
+        {!isOff && <DefenseField selAbbr={selAbbr} />}
+
+        {/* Cards de posição */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 12 }}>
+          {POS[side].map((p, i) => (
+            <PosCard key={i} p={p} isOff={isOff} sel={sel === i} onClick={() => setSel(sel === i ? null : i)} />
+          ))}
+        </div>
+
+        <div style={{ marginTop: 14, fontSize: 11, color: G.mu, fontFamily: G.mo, textAlign: 'center' }}>
+          clique em uma carta para expandir
+        </div>
+
       </div>
-      <div style={{ marginTop: 14, fontSize: 11, color: G.mu, fontFamily: G.mo, textAlign: 'center' }}>clique em uma carta para expandir</div>
     </div>
   )
 }
