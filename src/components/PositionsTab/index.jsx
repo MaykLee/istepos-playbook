@@ -72,9 +72,9 @@ function offTokenColor(id) {
   return G.mu2
 }
 
-function FieldToken({ p, col, isSelected }) {
+function FieldToken({ p, col, isSelected, onClick }) {
   return (
-    <g>
+    <g style={{ cursor: 'pointer' }} onClick={onClick}>
       <circle cx={p.x} cy={p.y} r={14} fill="rgba(10,10,14,0.92)" />
       <circle cx={p.x} cy={p.y} r={14}
         fill={isSelected ? `${col}55` : `${col}18`}
@@ -97,7 +97,7 @@ function FieldToken({ p, col, isSelected }) {
   )
 }
 
-function DefenseField({ selAbbr }) {
+function DefenseField({ selAbbr, onTokenClick }) {
   const FW = 400, FH = 220, LOS = 190
   return (
     <div style={{ borderRadius: 10, overflow: 'hidden', border: `1px solid rgba(196,18,48,0.2)`, marginBottom: 20 }}>
@@ -119,7 +119,7 @@ function DefenseField({ selAbbr }) {
         <text x={200} y={215} textAnchor="middle"
           fill="rgba(255,255,255,0.1)" fontSize="7" fontFamily="'Courier New',monospace">ATAQUE</text>
         {DEF_TOKENS.map(p => (
-          <FieldToken key={p.id} p={p} col={defTokenColor(p.id)} isSelected={selAbbr && p.abbr === selAbbr} />
+          <FieldToken key={p.id} p={p} col={defTokenColor(p.id)} isSelected={selAbbr && p.abbr === selAbbr} onClick={() => onTokenClick(p.abbr)} />
         ))}
       </svg>
       <div style={{ background: 'rgba(10,10,14,0.7)', borderTop: '1px solid rgba(196,18,48,0.1)', padding: '6px 14px' }}>
@@ -131,7 +131,7 @@ function DefenseField({ selAbbr }) {
   )
 }
 
-function OffenseField({ selAbbr }) {
+function OffenseField({ selAbbr, onTokenClick }) {
   const FW = 400, FH = 280, LOS = 190
   return (
     <div style={{ borderRadius: 10, overflow: 'hidden', border: `1px solid rgba(91,155,213,0.2)`, marginBottom: 20 }}>
@@ -155,7 +155,7 @@ function OffenseField({ selAbbr }) {
           fill="rgba(196,18,48,0.18)" fontSize="7" fontFamily="'Courier New',monospace">DEFESA</text>
         {/* Tokens ofensivos */}
         {OFF_TOKENS.map(p => (
-          <FieldToken key={p.id} p={p} col={offTokenColor(p.id)} isSelected={selAbbr && p.abbr === selAbbr} />
+          <FieldToken key={p.id} p={p} col={offTokenColor(p.id)} isSelected={selAbbr && p.abbr === selAbbr} onClick={() => onTokenClick(p.abbr)} />
         ))}
       </svg>
       <div style={{ background: 'rgba(10,10,14,0.7)', borderTop: '1px solid rgba(91,155,213,0.1)', padding: '6px 14px' }}>
@@ -203,6 +203,12 @@ export default function PositionsTab() {
   const ac = isOff ? G.bl : G.cr
   const selAbbr = sel !== null ? POS[side][sel]?.abbr : null
 
+  function handleTokenClick(abbr) {
+    const idx = POS[side].findIndex(p => p.abbr === abbr)
+    if (idx === -1) return
+    setSel(prev => prev === idx ? null : idx)
+  }
+
   return (
     <div style={{ maxWidth: 680, margin: '0 auto', paddingBottom: 24 }}>
       <div style={{
@@ -240,7 +246,7 @@ export default function PositionsTab() {
           })}
         </div>
 
-        {isOff  ? <OffenseField selAbbr={selAbbr} /> : <DefenseField selAbbr={selAbbr} />}
+        {isOff ? <OffenseField selAbbr={selAbbr} onTokenClick={handleTokenClick} /> : <DefenseField selAbbr={selAbbr} onTokenClick={handleTokenClick} />}
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 12 }}>
           {POS[side].map((p, i) => (
