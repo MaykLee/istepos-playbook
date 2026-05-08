@@ -26,7 +26,7 @@ const POS = {
   ],
 }
 
-// Tokens defensivos com coordenadas do Stack base
+// ── Tokens defensivos (Stack base) ──────────────────────────────────────────
 const base = BASES.Stack
 const DEF_TOKENS = [
   { id: 'E_left',   label: 'DE', abbr: 'E',  x: base.E_left.x,   y: base.E_left.y   },
@@ -42,7 +42,21 @@ const DEF_TOKENS = [
   { id: 'FS',       label: 'FS', abbr: 'FS', x: base.FS.x,       y: base.FS.y       },
 ]
 
-function tokenColor(id) {
+// ── Tokens ofensivos (Shotgun base) ─────────────────────────────────────────
+const OFF_TOKENS = [
+  { id: 'WR_L', label: 'WR', abbr: 'WR', x: 45,  y: 193 },
+  { id: 'LT',   label: 'LT', abbr: 'T',  x: 152, y: 196 },
+  { id: 'LG',   label: 'LG', abbr: 'G',  x: 176, y: 196 },
+  { id: 'C',    label: 'C',  abbr: 'C',  x: 200, y: 196 },
+  { id: 'RG',   label: 'RG', abbr: 'G',  x: 224, y: 196 },
+  { id: 'RT',   label: 'RT', abbr: 'T',  x: 248, y: 196 },
+  { id: 'TE',   label: 'TE', abbr: 'TE', x: 274, y: 194 },
+  { id: 'WR_R', label: 'WR', abbr: 'WR', x: 355, y: 193 },
+  { id: 'QB',   label: 'QB', abbr: 'QB', x: 200, y: 222 },
+  { id: 'RB',   label: 'RB', abbr: 'RB', x: 232, y: 236 },
+]
+
+function defTokenColor(id) {
   if (id === 'N' || id.startsWith('E_')) return G.cr
   if (['M','B','W','D','R'].includes(id))  return G.am
   if (id.startsWith('CB'))                 return G.bl
@@ -50,62 +64,103 @@ function tokenColor(id) {
   return G.mu
 }
 
+function offTokenColor(id) {
+  if (id === 'QB')                         return G.au
+  if (id === 'RB')                         return G.am
+  if (id === 'WR_L' || id === 'WR_R')     return G.bl
+  if (id === 'TE')                         return G.gr
+  return G.mu2
+}
+
+function FieldToken({ p, col, isSelected }) {
+  return (
+    <g>
+      <circle cx={p.x} cy={p.y} r={14} fill="rgba(10,10,14,0.92)" />
+      <circle cx={p.x} cy={p.y} r={14}
+        fill={isSelected ? `${col}55` : `${col}18`}
+        stroke={isSelected ? col : `${col}55`}
+        strokeWidth={isSelected ? 2.5 : 1.5}
+      />
+      {isSelected && (
+        <circle cx={p.x} cy={p.y} r={19}
+          fill="none" stroke={col} strokeWidth="1" strokeOpacity="0.4"
+          strokeDasharray="3,3"
+        />
+      )}
+      <text x={p.x} y={p.y + 4} textAnchor="middle"
+        fill={isSelected ? col : `${col}bb`}
+        fontSize={isSelected ? '9' : '8'} fontFamily="'Courier New',monospace"
+        style={{ pointerEvents: 'none' }}>
+        {p.label}
+      </text>
+    </g>
+  )
+}
+
 function DefenseField({ selAbbr }) {
   const FW = 400, FH = 220, LOS = 190
   return (
     <div style={{ borderRadius: 10, overflow: 'hidden', border: `1px solid rgba(196,18,48,0.2)`, marginBottom: 20 }}>
       <svg viewBox={`0 0 ${FW} ${FH}`} style={{ width: '100%', display: 'block' }}>
-        {/* Campo */}
         <rect x={0} y={0} width={FW} height={FH} fill="rgba(15,32,15,0.95)" />
         {[1,2,3,4,5,6,7,8,9].map(n => (
           <line key={n} x1={n*FW/10} y1={0} x2={n*FW/10} y2={FH}
             stroke="rgba(255,255,255,0.04)" strokeWidth="0.5" />
         ))}
-        {/* LOS */}
         <line x1={0} y1={LOS} x2={FW} y2={LOS} stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
         <text x={FW/2} y={LOS + 13} textAnchor="middle"
           fill="rgba(255,255,255,0.15)" fontSize="8" fontFamily="'Courier New',monospace">
           LINHA DE SCRIMMAGE
         </text>
-        {/* Silhueta da linha ofensiva */}
         {[160,180,200,220,240].map((x, i) => (
           <circle key={i} cx={x} cy={196} r={11}
             fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
         ))}
         <text x={200} y={215} textAnchor="middle"
           fill="rgba(255,255,255,0.1)" fontSize="7" fontFamily="'Courier New',monospace">ATAQUE</text>
-
-        {/* Tokens defensivos */}
-        {DEF_TOKENS.map(p => {
-          const isSelected = selAbbr && p.abbr === selAbbr
-          const col = tokenColor(p.id)
-          return (
-            <g key={p.id}>
-              <circle cx={p.x} cy={p.y} r={14} fill="rgba(10,10,14,0.92)" />
-              <circle cx={p.x} cy={p.y} r={14}
-                fill={isSelected ? `${col}55` : `${col}18`}
-                stroke={isSelected ? col : `${col}55`}
-                strokeWidth={isSelected ? 2.5 : 1.5}
-              />
-              {isSelected && (
-                <circle cx={p.x} cy={p.y} r={18}
-                  fill="none" stroke={col} strokeWidth="1" strokeOpacity="0.4"
-                  strokeDasharray="3,3"
-                />
-              )}
-              <text x={p.x} y={p.y + 4} textAnchor="middle"
-                fill={isSelected ? col : `${col}bb`}
-                fontSize={isSelected ? '9' : '8'} fontFamily="'Courier New',monospace"
-                style={{ pointerEvents: 'none' }}>
-                {p.label}
-              </text>
-            </g>
-          )
-        })}
+        {DEF_TOKENS.map(p => (
+          <FieldToken key={p.id} p={p} col={defTokenColor(p.id)} isSelected={selAbbr && p.abbr === selAbbr} />
+        ))}
       </svg>
       <div style={{ background: 'rgba(10,10,14,0.7)', borderTop: '1px solid rgba(196,18,48,0.1)', padding: '6px 14px' }}>
         <span style={{ fontFamily: G.mo, fontSize: 9, color: G.mu, letterSpacing: 1 }}>
           FORMAÇÃO BASE — STACK · {selAbbr ? `${selAbbr} DESTACADO` : 'SELECIONE UMA POSIÇÃO'}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+function OffenseField({ selAbbr }) {
+  const FW = 400, FH = 280, LOS = 190
+  return (
+    <div style={{ borderRadius: 10, overflow: 'hidden', border: `1px solid rgba(91,155,213,0.2)`, marginBottom: 20 }}>
+      <svg viewBox={`0 0 ${FW} ${FH}`} style={{ width: '100%', display: 'block' }}>
+        <rect x={0} y={0} width={FW} height={FH} fill="rgba(15,32,15,0.95)" />
+        {[1,2,3,4,5,6,7,8,9].map(n => (
+          <line key={n} x1={n*FW/10} y1={0} x2={n*FW/10} y2={FH}
+            stroke="rgba(255,255,255,0.04)" strokeWidth="0.5" />
+        ))}
+        <line x1={0} y1={LOS} x2={FW} y2={LOS} stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
+        <text x={FW/2} y={LOS - 7} textAnchor="middle"
+          fill="rgba(255,255,255,0.15)" fontSize="8" fontFamily="'Courier New',monospace">
+          LINHA DE SCRIMMAGE
+        </text>
+        {/* Silhueta da defesa */}
+        {[148,172,200,228,252].map((x, i) => (
+          <circle key={i} cx={x} cy={172} r={11}
+            fill="rgba(196,18,48,0.04)" stroke="rgba(196,18,48,0.15)" strokeWidth="1" />
+        ))}
+        <text x={200} y={150} textAnchor="middle"
+          fill="rgba(196,18,48,0.18)" fontSize="7" fontFamily="'Courier New',monospace">DEFESA</text>
+        {/* Tokens ofensivos */}
+        {OFF_TOKENS.map(p => (
+          <FieldToken key={p.id} p={p} col={offTokenColor(p.id)} isSelected={selAbbr && p.abbr === selAbbr} />
+        ))}
+      </svg>
+      <div style={{ background: 'rgba(10,10,14,0.7)', borderTop: '1px solid rgba(91,155,213,0.1)', padding: '6px 14px' }}>
+        <span style={{ fontFamily: G.mo, fontSize: 9, color: G.mu, letterSpacing: 1 }}>
+          FORMAÇÃO BASE — SHOTGUN · {selAbbr ? `${selAbbr} DESTACADO` : 'SELECIONE UMA POSIÇÃO'}
         </span>
       </div>
     </div>
@@ -150,13 +205,10 @@ export default function PositionsTab() {
 
   return (
     <div style={{ maxWidth: 680, margin: '0 auto', paddingBottom: 24 }}>
-
-      {/* Header */}
       <div style={{
         background: `linear-gradient(135deg, ${isOff ? '#08101a' : '#1a0508'} 0%, #0e0e12 60%)`,
         borderBottom: `2px solid ${ac}`,
-        padding: '18px 24px',
-        marginBottom: 24,
+        padding: '18px 24px', marginBottom: 24,
         display: 'flex', alignItems: 'center', gap: 16,
       }}>
         <img src="/istepos-logo.png" alt="ISTEPOS" style={{ width: 44, height: 44, objectFit: 'contain' }} />
@@ -167,8 +219,6 @@ export default function PositionsTab() {
       </div>
 
       <div style={{ padding: '0 16px' }}>
-
-        {/* Seletor lado */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
           {['offense','defense'].map(s => {
             const sAc = s === 'offense' ? G.bl : G.cr
@@ -190,20 +240,16 @@ export default function PositionsTab() {
           })}
         </div>
 
-        {/* Diagrama de campo (só defesa) */}
-        {!isOff && <DefenseField selAbbr={selAbbr} />}
+        {isOff  ? <OffenseField selAbbr={selAbbr} /> : <DefenseField selAbbr={selAbbr} />}
 
-        {/* Cards de posição */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 12 }}>
           {POS[side].map((p, i) => (
             <PosCard key={i} p={p} isOff={isOff} sel={sel === i} onClick={() => setSel(sel === i ? null : i)} />
           ))}
         </div>
-
         <div style={{ marginTop: 14, fontSize: 11, color: G.mu, fontFamily: G.mo, textAlign: 'center' }}>
           clique em uma carta para expandir
         </div>
-
       </div>
     </div>
   )

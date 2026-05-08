@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { G } from '../../tokens.js'
-import { GLOSSARY, GLOSSARY_CATS } from '../../data/glossary.js'
+import { GLOSSARY, GLOSSARY_CATS, GLOSSARY_MAP } from '../../data/glossary.js'
 
 const CAT_META = {
   Todos:  { color: G.au,  icon: '📖', sub: 'todos os conceitos do playbook' },
@@ -45,6 +45,15 @@ export default function GlossaryTab() {
     const mq = !q || g.term.toLowerCase().includes(q.toLowerCase()) || g.def.toLowerCase().includes(q.toLowerCase())
     return mq && (cat === 'Todos' || g.cat === cat)
   }), [q, cat])
+
+  // Busca por sigla no GLOSSARY_MAP (ex: "TE", "QB", "NT", "LOS")
+  const siglasMatch = useMemo(() => {
+    if (!q || q.length < 1) return []
+    const upper = q.toUpperCase()
+    return Object.entries(GLOSSARY_MAP)
+      .filter(([key]) => key.includes(upper))
+      .map(([key, def]) => ({ term: key, def, cat: 'Sigla' }))
+  }, [q])
 
   // Agrupa por categoria quando "Todos" sem busca ativa
   const grouped = useMemo(() => {
@@ -128,7 +137,25 @@ export default function GlossaryTab() {
         {/* Label de resultado de busca */}
         {q && (
           <div style={{ fontFamily: G.mo, fontSize: 10, color: G.mu, letterSpacing: 2, marginBottom: 14 }}>
-            {filtered.length} RESULTADO{filtered.length !== 1 ? 'S' : ''} PARA "{q.toUpperCase()}"
+            {siglasMatch.length + filtered.length} RESULTADO{siglasMatch.length + filtered.length !== 1 ? 'S' : ''} PARA "{q.toUpperCase()}"
+          </div>
+        )}
+
+        {/* Siglas do GLOSSARY_MAP (aparecem primeiro na busca) */}
+        {q && siglasMatch.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
+            {siglasMatch.map((g, i) => (
+              <div key={i} style={{
+                background: G.s, border: `1px solid ${G.au}30`,
+                borderLeft: `4px solid ${G.au}`, borderRadius: 10, padding: '16px 20px',
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                  <div style={{ fontSize: 19, fontFamily: G.mo, fontWeight: 'bold', color: G.au, lineHeight: 1.2 }}>{g.term}</div>
+                  <span style={{ background: `${G.au}18`, border: `1px solid ${G.au}40`, borderRadius: 4, padding: '3px 9px', fontSize: 9, color: G.au, fontFamily: G.mo, whiteSpace: 'nowrap', marginLeft: 12, marginTop: 3 }}>SIGLA</span>
+                </div>
+                <div style={{ fontSize: 13, color: G.mu2, lineHeight: 1.7 }}>{g.def}</div>
+              </div>
+            ))}
           </div>
         )}
 
