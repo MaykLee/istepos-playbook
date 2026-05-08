@@ -95,18 +95,20 @@ export default function FieldDiagram({ play, onPlayerClick, selectedPlayer }) {
           LINHA DE SCRIMMAGE
         </text>
 
-        {/* Setas (sempre visíveis, mostram para onde cada um vai) */}
+        {/* Setas (sempre visíveis, saem fora do círculo do token) */}
         {play.players.map(p => {
           const dx = p.moveTo.x - p.x
           const dy = p.moveTo.y - p.y
           const len = Math.sqrt(dx*dx + dy*dy)
-          if (len < 5) return null
+          if (len < 20) return null
+          const sx = p.x + (dx/len) * 16
+          const sy = p.y + (dy/len) * 16
           const tx = p.moveTo.x - (dx/len) * 9
           const ty = p.moveTo.y - (dy/len) * 9
           const isBlitz = p.moveTo.y > p.y + 6
           return (
             <path key={`a-${p.id}`}
-              d={`M${p.x},${p.y} L${tx},${ty}`}
+              d={`M${sx},${sy} L${tx},${ty}`}
               stroke={isBlitz ? `${G.rd}90` : `${G.au}55`}
               strokeWidth="1.5" fill="none" strokeDasharray="5,3"
               markerEnd={isBlitz ? 'url(#arr-blitz)' : 'url(#arr-move)'}
@@ -123,6 +125,11 @@ export default function FieldDiagram({ play, onPlayerClick, selectedPlayer }) {
 
           return (
             <g key={p.id} style={{ cursor: 'pointer' }} onClick={() => onPlayerClick(p)}>
+              {/* Fundo sólido para não deixar a seta transparece no label */}
+              <circle cx={cx} cy={cy} r={13}
+                fill="rgba(10,10,14,0.92)"
+                style={{ transition: 'cx 0.6s ease, cy 0.6s ease' }}
+              />
               <circle cx={cx} cy={cy} r={13}
                 fill={isSel ? `${col}50` : `${col}22`}
                 stroke={isSel ? col : `${col}88`}
