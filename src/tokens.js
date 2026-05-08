@@ -1,5 +1,5 @@
 export const G = {
-  bg:  '#900018',
+  bg:  '#0e0e12',
   s:   '#16161e',
   s2:  '#1e1e2a',
   au:  '#c9a227',

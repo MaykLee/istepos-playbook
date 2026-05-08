@@ -20,7 +20,7 @@ export default function App() {
 
       {/* ── HEADER ── */}
       <div style={{
-        background: `rgba(0,0,0,0.25)`,
+        background: `#13131a`,
         borderBottom: `3px solid ${G.cr}`,
         padding: '12px 24px',
         display: 'flex', alignItems: 'center', gap: 16,
