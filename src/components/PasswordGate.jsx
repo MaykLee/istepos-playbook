@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { G } from '../tokens.js'
 
 const KEY = 'istepos_access'
-const CORRECT = import.meta.env.VITE_APP_PASSWORD
+const CORRECT = '123Istepos!'
 
 export default function PasswordGate({ children }) {
   const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem(KEY) === '1')
