@@ -1,6 +1,22 @@
 # ISTEPOS Playbook — Backlog
 
-> Atualizado: 2026-05-08. Design v2 entregue.
+> Atualizado: 2026-05-08. Design v2 + Posições completo (Defesa + Ataque) entregue.
+
+---
+
+## ✅ Entregue — Posições bidirecional + Playbook header + Glossário busca (sessão 2026-05-08 cont.)
+
+### Posições
+- Diagrama ofensivo (Shotgun): QB recuado, RB, WR_L/WR_R, TE, OL completo
+- Interação bidirecional: clicar card ↔ token no campo (ambos funcionam)
+- Tokens clicáveis com cursor pointer; anel/destaque ao selecionar
+
+### Glossário
+- Busca ao vivo por siglas (GLOSSARY_MAP): digitar "TE", "QB", "LOS" retorna resultado imediato
+- Cards de sigla aparecem antes dos termos completos na busca
+
+### Playbook
+- Header ISTEPOS com gradiente dourado (G.au), logo, sub-tabs com ícones
 
 ---
 
@@ -51,8 +67,8 @@
 - Glossário: GlossaryText nas definições dos cards (termos dentro da def clicáveis)
 
 ### Posições
-- Diagrama ofensivo (coordenadas XY para QB, RB, WR, TE, OL a definir)
-- Animação de destaque ao selecionar posição no campo
+- ~~Diagrama ofensivo~~ ✅ entregue
+- ~~Animação de destaque~~ ✅ entregue
 
 ### Quiz
 - Estatísticas de acerto por jogada no "Quiz por Jogada"
